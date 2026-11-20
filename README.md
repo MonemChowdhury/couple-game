@@ -1,4 +1,4 @@
-# Couple Game Template
+# Couple Game
 
 A personalised two-player game gift for couples. Single page, no server, runs on GitHub Pages.
 
