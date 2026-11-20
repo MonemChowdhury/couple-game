@@ -1,0 +1,724 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Game Night for Two</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700;800&family=Space+Mono:wght@700&display=swap">
+<style>
+/* Layout: a level path ("board") under a slim chip bar; one big action per screen. Every mood theme rewrites these tokens. */
+:root{
+  --bg1:#0b1026; --bg2:#2a3a6e; --onbg:#e8ecff; --paper:#151c3a; --ink:#eef1ff; --muted:#a3acd6; --line:#2c3766; --tile:#1f2850;
+  --a1:#ffd166; --a2:#9b8cff; --a3:#5ec8ff; --btn:#1b1400;
+  --display:"Fredoka","Nunito",ui-rounded,system-ui,sans-serif;
+  --body:"Nunito",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"Space Mono",ui-monospace,Menlo,monospace;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{min-height:100%}
+body{margin:0;background-color:var(--bg1);background-image:linear-gradient(165deg,var(--bg1),var(--bg2));background-attachment:fixed;color:var(--ink);
+  font-family:var(--body);font-size:16px;line-height:1.5;-webkit-tap-highlight-color:transparent;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg1)}
+#bgfx,#fx{position:fixed;inset:0;width:100%;height:100%;pointer-events:none}
+#bgfx{z-index:0} #fx{z-index:40}
+.wrap{position:relative;z-index:1;max-width:480px;margin:0 auto;padding-block:10px 36px;display:flex;flex-direction:column;gap:14px}
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;display:flex;align-items:center;gap:8px;padding-block:6px}
+.grow{flex:1}
+.chip{display:inline-flex;align-items:center;gap:6px;background:var(--paper);color:var(--ink);border:1px solid var(--line);border-radius:999px;
+  padding:7px 12px;font:700 14px var(--body);cursor:pointer;white-space:nowrap;box-shadow:0 4px 14px rgba(0,0,0,.18);min-height:38px}
+.chip.icon{width:40px;justify-content:center;padding:0}
+.card{background:var(--paper);color:var(--ink);border:1px solid var(--line);border-radius:24px;padding:20px 18px;display:flex;flex-direction:column;gap:14px;
+  box-shadow:0 14px 34px rgba(0,0,0,.22);animation:pop .35s ease}
+@keyframes pop{from{transform:translateY(8px) scale(.98);opacity:.4}to{transform:none;opacity:1}}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--a1)}
+h1,h2,h3{font-family:var(--display);margin:0;line-height:1.12;text-wrap:balance}
+h1{font-size:clamp(30px,8.5vw,40px)} h2{font-size:25px} h3{font-size:19px}
+p{margin:0} .muted{color:var(--muted)} .small{font-size:14px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center} .between{justify-content:space-between} .center{justify-content:center}
+.stack{display:flex;flex-direction:column;gap:10px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font:600 18px var(--display);border:none;border-radius:16px;padding:12px 20px;
+  cursor:pointer;background:var(--a1);color:var(--btn);text-decoration:none;min-height:52px;box-shadow:0 4px 0 color-mix(in srgb,var(--a1) 55%,#000);transition:transform .08s}
+.btn:active{transform:translateY(3px);box-shadow:0 1px 0 color-mix(in srgb,var(--a1) 55%,#000)}
+.btn.big{width:100%;font-size:21px;min-height:62px}
+.btn.alt{background:var(--tile);color:var(--ink);box-shadow:0 4px 0 var(--line)}
+.btn.wa{background:#25D366;color:#05301a;box-shadow:0 4px 0 #128C7E}
+.btn:disabled{opacity:.45}
+.link{background:none;border:none;color:var(--muted);font:inherit;font-size:14px;text-decoration:underline;cursor:pointer;padding:6px}
+button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid var(--a2);outline-offset:2px}
+
+/* lock */
+.code{display:flex;justify-content:center;gap:12px}
+.code i{width:16px;height:16px;border-radius:50%;border:2px solid var(--a1)}
+.code i.f{background:var(--a1)}
+.code.bad{animation:shake .4s}
+@keyframes shake{25%{transform:translateX(-8px)}50%{transform:translateX(8px)}75%{transform:translateX(-4px)}}
+.pad{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;max-width:270px;width:100%;margin:0 auto}
+.pad button{font:700 22px var(--mono);border:2px solid var(--line);background:var(--tile);color:var(--ink);border-radius:16px;padding:12px 0;cursor:pointer}
+
+/* who / mood */
+.who{display:flex;flex-direction:column;align-items:center;gap:2px;padding:18px 8px;border-radius:20px;border:3px solid transparent;cursor:pointer;
+  background:var(--tile);color:var(--ink);font:600 20px var(--display)}
+.who b{font-size:38px;line-height:1.1} .who small{font:600 13px var(--body);color:var(--muted)}
+.mode{display:flex;gap:6px;background:var(--tile);border-radius:14px;padding:4px}
+.mode button{flex:1;border:none;border-radius:11px;padding:10px 6px;background:transparent;color:var(--muted);font:700 14px var(--body);cursor:pointer}
+.mode button.on{background:var(--paper);color:var(--ink);box-shadow:0 2px 8px rgba(0,0,0,.12)}
+.moods{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.mood{display:flex;flex-direction:column;align-items:center;gap:4px;padding:16px 8px;border-radius:20px;border:2px solid var(--line);background:var(--tile);
+  color:var(--ink);cursor:pointer;font:600 17px var(--display);transition:transform .15s}
+.mood:active{transform:scale(.96)}
+.mood b{font-size:36px;line-height:1.1} .mood small{font:600 12px var(--body);color:var(--muted);text-align:center}
+.mood.on{border-color:var(--a1);background:color-mix(in srgb,var(--a1) 16%,var(--tile))}
+.tags{display:flex;flex-wrap:wrap;gap:6px}
+.tag{background:var(--tile);border-radius:999px;padding:6px 12px;font-weight:700;font-size:14px}
+.rules{display:flex;flex-direction:column;gap:8px;margin:0;padding:0;list-style:none}
+.rules li{display:flex;gap:10px;align-items:flex-start;background:var(--tile);border-radius:14px;padding:10px 12px;font-size:15px}
+.rules li b{font-size:20px;line-height:1.2}
+.score.solo{grid-template-columns:1fr}
+
+/* board */
+.clocks{display:grid;grid-template-columns:1fr auto 1fr;gap:8px;align-items:center;text-align:center}
+.clk{background:var(--tile);border-radius:14px;padding:8px 6px;min-width:0}
+.clk b{display:block;font:700 19px var(--mono);font-variant-numeric:tabular-nums}
+.clk span{font-size:12px;color:var(--muted)}
+.path{display:flex;align-items:center;overflow-x:auto;padding:10px 4px 26px;scrollbar-width:none}
+.path::-webkit-scrollbar{display:none}
+.node{flex:0 0 auto;width:50px;height:50px;border-radius:50%;display:grid;place-items:center;font-size:23px;background:var(--tile);border:3px solid var(--line);position:relative}
+.node small{position:absolute;top:100%;margin-top:4px;font:700 11px var(--mono);color:var(--muted);white-space:nowrap}
+.node.done{background:var(--a3);border-color:var(--a3)}
+.node.cur{border-color:var(--a1);transform:scale(1.14);box-shadow:0 0 0 6px color-mix(in srgb,var(--a1) 28%,transparent);animation:pulse 1.8s ease-in-out infinite}
+.node.lock{opacity:.55}
+@keyframes pulse{50%{box-shadow:0 0 0 11px color-mix(in srgb,var(--a1) 10%,transparent)}}
+.seg{flex:1 0 18px;height:5px;border-radius:3px;background:var(--line)} .seg.done{background:var(--a3)}
+.turn{display:flex;align-items:center;gap:12px;padding:12px;border-radius:18px;background:var(--tile)}
+.av{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;font-size:24px;background:var(--a1);color:var(--btn);flex:0 0 auto}
+.turn .t{min-width:0}
+.score{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;text-align:center;gap:6px}
+.score b{display:block;font:700 30px var(--mono);font-variant-numeric:tabular-nums}
+.score span{font-size:14px;color:var(--muted)}
+.vs{font:700 14px var(--mono);color:var(--a1)}
+.key{font:700 clamp(30px,10vw,40px) var(--mono);letter-spacing:.14em;text-align:center;padding:14px 8px;border-radius:18px;background:var(--tile);
+  border:2px dashed var(--a1);user-select:all;font-variant-numeric:tabular-nums}
+.keyin{font:700 24px var(--mono);letter-spacing:.14em;text-transform:uppercase;text-align:center;padding:12px;border-radius:14px;border:2px solid var(--line);
+  background:var(--paper);color:var(--ink);width:100%}
+.err{color:var(--a1);font-weight:800;min-height:1.4em;font-size:15px}
+.steps{display:flex;flex-direction:column;gap:6px;margin:0;padding-left:20px;font-size:15px}
+
+/* games */
+.status{font:700 14px var(--mono);color:var(--muted);min-height:1.5em}
+.earned{font-family:var(--display);color:var(--a3);font-size:17px}
+.pz{display:grid;gap:3px;width:100%;max-width:340px;aspect-ratio:1;margin:0 auto;background:var(--tile);padding:3px;border-radius:14px}
+.tile{border:none;border-radius:7px;cursor:pointer;position:relative;padding:0;background-color:var(--line)}
+.tile.blank{background:transparent;cursor:default}
+.tile span{position:absolute;top:3px;left:5px;font:700 11px var(--mono);color:#fff;text-shadow:0 1px 2px #000a}
+.pz.hide .tile span{display:none}
+.pz.solved{gap:0;padding:0} .pz.solved .tile{border-radius:0}
+.mem{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.mc{aspect-ratio:3/4;perspective:600px;border:none;background:none;padding:0;cursor:pointer}
+.mc .in{position:relative;width:100%;height:100%;transition:transform .35s;transform-style:preserve-3d}
+.mc.up .in,.mc.got .in{transform:rotateY(180deg)}
+.mc .f,.mc .b{position:absolute;inset:0;border-radius:12px;display:grid;place-items:center;backface-visibility:hidden}
+.mc .b{background:var(--a2);color:var(--btn);font:700 22px var(--display)}
+.mc .f{background:var(--tile);transform:rotateY(180deg);font-size:30px}
+.mc.got .f{outline:3px solid var(--a1)}
+.q{font:600 22px var(--display);min-height:3.4em;text-wrap:balance}
+.pick{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.pick .btn{width:100%}
+.pick .btn.b2{background:var(--a2);box-shadow:0 4px 0 color-mix(in srgb,var(--a2) 55%,#000)}
+.field{position:relative;height:360px;background:var(--tile);border-radius:18px;overflow:hidden;touch-action:manipulation;user-select:none}
+.ht{position:absolute;font-size:36px;line-height:1;border:none;background:none;padding:4px;cursor:pointer}
+.ht.pop{animation:popout .25s forwards}
+@keyframes popout{to{transform:scale(1.8);opacity:0}}
+.overlay{position:absolute;inset:0;display:grid;place-items:center;text-align:center;padding:16px;background:color-mix(in srgb,var(--tile) 70%,transparent)}
+.hud{display:flex;justify-content:space-between;font:700 15px var(--mono)}
+.bar{height:10px;border-radius:5px;background:var(--line);overflow:hidden} .bar i{display:block;height:100%;background:var(--a1);width:0;transition:width .2s}
+.ttt{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;max-width:300px;width:100%;margin:0 auto}
+.ttt button{aspect-ratio:1;border:none;border-radius:14px;background:var(--tile);font-size:40px;cursor:pointer;color:var(--ink)}
+.ttt button.w{background:color-mix(in srgb,var(--a1) 45%,var(--tile))}
+
+/* reveal */
+.cmp{display:grid;grid-template-columns:1fr 1fr;gap:10px;text-align:center}
+.cmp div{background:var(--tile);border-radius:16px;padding:12px 8px;border:3px solid transparent}
+.cmp div.win{border-color:var(--a1)}
+.cmp b{display:block;font:700 28px var(--mono)}
+.cmp span{font-size:14px;color:var(--muted)}
+.verdict{font:600 22px var(--display);text-align:center;text-wrap:balance}
+.scr{position:relative;width:100%;aspect-ratio:16/9;border-radius:18px;overflow:hidden}
+.scr .under{position:absolute;inset:0;background:var(--tile);display:grid;place-items:center;text-align:center;padding:18px;font:600 19px var(--display);text-wrap:balance}
+.scr canvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none;cursor:grab;transition:opacity .5s}
+.wheelbox{position:relative;width:100%;max-width:300px;aspect-ratio:1;margin:0 auto}
+.wheelbox canvas{width:100%;height:100%}
+.pointer{position:absolute;top:-6px;left:50%;transform:translateX(-50%);border-left:14px solid transparent;border-right:14px solid transparent;border-top:26px solid var(--ink)}
+.result{font:600 22px var(--display);text-align:center;min-height:1.3em}
+.album{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.album figure{margin:0;aspect-ratio:3/4;border-radius:14px;overflow:hidden;background:var(--tile)}
+.album figure:first-child{grid-column:span 2;aspect-ratio:4/3}
+.album img{width:100%;height:100%;object-fit:cover;display:block}
+.toast{position:fixed;left:50%;bottom:calc(18px + env(safe-area-inset-bottom,0px));transform:translate(-50%,140%);z-index:30;background:var(--paper);color:var(--ink);
+  border:1px solid var(--line);padding:10px 18px;border-radius:999px;font-weight:800;box-shadow:0 10px 30px rgba(0,0,0,.25);transition:transform .45s cubic-bezier(.3,1.4,.5,1);white-space:nowrap}
+.toast.show{transform:translate(-50%,0)}
+.credit{color:var(--onbg);opacity:.85;text-align:center;font-size:13px}
+.credit b{user-select:all}
+@media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
+</style>
+
+</head>
+<body>
+<canvas id="bgfx" aria-hidden="true"></canvas>
+<canvas id="fx" aria-hidden="true"></canvas>
+<div class="wrap">
+  <header class="top" id="top" hidden>
+    <button class="chip" id="themeChip" aria-label="Change mood"></button>
+    <span class="grow"></span>
+    <span class="chip" id="lvChip"></span>
+    <button class="chip icon" id="snd" aria-label="Music on">♪</button>
+  </header>
+  <main id="view"></main>
+  <p class="credit">Made with love by Monem · want one for your someone? <b>info@monemshariar.com</b></p>
+</div>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+// ================= Edit these for each couple =================
+const CONFIG = {
+  her: "Mira", him: "Sam",                         // Partner 1 / Partner 2 first names
+  herPlace: "Toronto", herTz: "America/Toronto",   // city shown on screen + IANA time zone
+  himPlace: "London", himTz: "Europe/London",
+  lock: "1402",                                    // 4 digits, DDMM of a date that matters to them
+  lockHint: "To unlock, enter the day you first met: day then month (DDMM).",
+  from: "",                                        // sign-off, e.g. "Your best friend Sara"
+  photo: "media/puzzle.jpg",                       // square couple photo for the puzzle
+  album: ["media/w1.jpg","media/w2.jpg","media/w3.jpg","media/w4.jpg","media/w5.jpg"],
+  music: "media/music.mp3"                         // set to "" for no music
+};
+// ===============================================================
+const LIKELY = ["change the profile picture to a couple photo", "save every cute chat as a screenshot", "remember every tiny detail", "eat the last slice", "overpack for a visit", "talk in a baby voice", "make the other blush on a call", "know the other’s tea or coffee order by heart", "stay up way too late just to keep talking", "dance in the kitchen", "buy matching things", "have the worse internet connection", "get lost at the airport", "miss the other more on weekends", "say I love you first on a call", "cry at a sad movie", "cry at the airport", "press play late on a movie-together night", "keep checking if the other is online", "mail a surprise gift", "be late for a call", "take forever to decide what to eat", "fall asleep with the call still on", "fall asleep mid-sentence", "order food to the other’s door from far away", "wake up early just for a call", "reply with only an emoji", "count the days until the next visit", "win an argument", "keep a countdown to the next meeting", "send a random selfie for no reason", "get way too excited about a delivery", "text good morning while the other is going to bed", "call first after a fight", "spoil a show’s ending", "send a song that reminds them of the other", "send the most voice notes", "watch the next episode without the other", "plan your dream home", "send the first message of the day", "forget the time difference", "start a call just to say nothing at all", "cheer the other up after a bad day", "eat on camera during a call", "forget an important date", "say sorry first", "send a miss-you message at 3 a.m.", "rewatch old photos at midnight", "plan a surprise", "laugh at their own jokes", "plan the next visit", "leave the other on seen", "get hungry in the middle of a video call", "fall asleep on a video call", "screenshot the other’s funny face", "send a voice note longer than five minutes", "send a long paragraph text", "steal the blanket when together", "cook the other’s favourite dish", "cry first when saying goodbye", "get jealous first", "sing on a video call", "forget to charge the phone before a call", "be the first to book a flight"];
+const SCRATCH = ["The miles are just a number. You two are the real thing.", `Somewhere between ${CONFIG.herPlace} and ${CONFIG.himPlace} there is a heart that belongs to both of you.`, "Every goodnight there is a good morning here. You two never really say goodbye.", "Two time zones, one team.", "The waiting is hard. The hug at the airport will be worth all of it.", "Every call counts. Every message matters. Keep going.", "Some couples share a sofa. You two share the same sky.", "The same moon is watching over both of you tonight.", "You're not apart. You're just between visits.", "One day this distance will be a story you tell, not the life you live.", "Patience now, forever later.", "Far away, but never far apart.", "Love doesn't check the time zone.", "Missing each other just means it's real.", "Count the days down, not the miles.", "Every good morning text is a little hug across the miles.", "Strong couples still miss each other. They just never give up.", "The distance is wide. Your love is wider.", "Today's video call is tomorrow's sweet memory.", "Same playlist, two cities, one heart.", "Hold on. The next hello is closer than it was yesterday.", "Long distance is temporary. You two are permanent.", "Your love story has more airport scenes than a movie.", "Wherever you two are, home is the other one.", "Proof that love travels faster than planes.", "You're each other's favourite notification.", `One heart in ${CONFIG.herPlace}, one in ${CONFIG.himPlace}, the same beat.`, "Every mile between you is a mile you'll close one day.", "You two make missing someone look beautiful.", "Your next hug is already on its way.", "Being apart only shows how much you belong together.", "Tonight's challenge: tell each other one thing you're grateful for.", "Tonight's challenge: share your favourite memory together.", "Tonight's challenge: plan one tiny thing to do on your next call.", "Tonight's challenge: send each other a photo of your view right now.", "Tonight's challenge: pick the first meal you'll eat together next visit.", "Tonight's challenge: say three things you love about each other.", "Tonight's challenge: listen to the same song at the same time.", "The distance is real. So is everything you two have built.", "Good things take time. The best things are worth the wait."];
+const DATES = ["3 things I miss", "Best memory", "Next visit plan", "Show your view", "A song for you", "Dream home", "Why I love you", "Same meal"];
+const DATE_DESC = ["Tell each other three little things you miss about being together.", "Each share your favourite memory of the two of you.", "Plan the very first thing you'll do when you meet again.", "Turn your camera around and show each other where you are right now.", "Pick a song that reminds you of the other and play it together.", "Describe one room of your future home together.", "Say one reason you love each other that you've never said before.", "Eat the same meal on a call, even if it's breakfast for one and dinner for the other."];
+
+const THEMES = {
+ moon:  {name:"Moonlit Sky",   dark:1,bg1:"#0b1026",bg2:"#2a3a6e",onbg:"#e8ecff",paper:"#151c3a",ink:"#eef1ff",muted:"#a3acd6",line:"#2c3766",tile:"#1f2850",a1:"#ffd166",a2:"#9b8cff",a3:"#5ec8ff",btn:"#1b1400",fx:["✨","🌙","⭐","💫"],sym:["🌙","⭐","🪐","☄️","🌌","🔭","💫","🌠"],c:["⭐","🌟"]},
+ rain:  {name:"Rainy Window",  bg1:"#1c2b3a",bg2:"#56748c",onbg:"#eaf2f8",paper:"#f4f7fa",ink:"#1d2a36",muted:"#5c7183",line:"#d5e0ea",tile:"#e6eef5",a1:"#d9603f",a2:"#3d5a80",a3:"#5b9a8b",btn:"#ffffff",fx:["💧","☔","🌧️"],sym:["☔","💧","🌧️","🫖","📖","🕯️","🧸","🌈"],c:["💧","🌈"]},
+ rose:  {name:"Rose Garden",   bg1:"#5c0f2b",bg2:"#e0607e",onbg:"#fff0f4",paper:"#fff7f9",ink:"#3d0b1e",muted:"#9a5b6e",line:"#f6d3dd",tile:"#fde7ed",a1:"#d81e5b",a2:"#e07a2f",a3:"#2a9d8f",btn:"#ffffff",fx:["🌹","🌸","💗"],sym:["🌹","🌷","💐","💌","💍","🍫","🥂","💋"],c:["🌹","💖"]},
+ candle:{name:"Candlelight",   dark:1,bg1:"#1a0a0f",bg2:"#6b1d2a",onbg:"#ffe9d6",paper:"#24121a",ink:"#ffeedd",muted:"#c99a8a",line:"#4a2530",tile:"#33192a",a1:"#ffb347",a2:"#ff6f61",a3:"#e9c46a",btn:"#2a1200",fx:["🕯️","✨","❤️"],sym:["🕯️","🍷","🎻","🌹","💌","🍝","🎶","💞"],c:["❤️","💛"]},
+ candy: {name:"Candy Pop",     bg1:"#ff8fc6",bg2:"#ffd36e",onbg:"#3b0a45",paper:"#ffffff",ink:"#3b0a45",muted:"#8a5a96",line:"#f7d6ec",tile:"#fff0f8",a1:"#e8287a",a2:"#0096b7",a3:"#f29e02",btn:"#ffffff",fx:["🍭","🍬","🎈","🫧"],sym:["🍭","🍬","🧁","🍩","🎈","🍦","🍓","🎀"],c:["🍬","🍭"]},
+ arcade:{name:"Arcade Night",  dark:1,bg1:"#12002b",bg2:"#3b0a7a",onbg:"#f3e8ff",paper:"#1b0b38",ink:"#f6eeff",muted:"#b79be0",line:"#3a2170",tile:"#2a1355",a1:"#00f0ff",a2:"#ff2bd6",a3:"#ffe600",btn:"#08002a",fx:["👾","⭐","🕹️"],sym:["👾","🕹️","🎮","🏆","💎","🚀","⚡","🎯"],c:["💎","⭐"]},
+ chai:  {name:"Chai Evening",  bg1:"#6f4518",bg2:"#d9a066",onbg:"#fff6ea",paper:"#fffaf3",ink:"#3b2412",muted:"#8a6a50",line:"#efdcc6",tile:"#f8ecdc",a1:"#b94a33",a2:"#5b7f4f",a3:"#d08c32",btn:"#ffffff",fx:["☕","🍪","🍂"],sym:["☕","🍪","🍰","📚","🧣","🍂","🕯️","🎧"],c:["☕","🍪"]},
+ snow:  {name:"Winter Blanket",bg1:"#6f9fcf",bg2:"#e8f1fb",onbg:"#14324f",paper:"#ffffff",ink:"#14324f",muted:"#5f7d99",line:"#d8e6f3",tile:"#eef5fc",a1:"#d62839",a2:"#457b9d",a3:"#5aa9e6",btn:"#ffffff",fx:["❄️","☃️"],sym:["❄️","☃️","🧤","🧣","☕","🛷","🎄","🧦"],c:["❄️","☃️"]},
+ sun:   {name:"Sunshine",      bg1:"#ff9a3c",bg2:"#ffe259",onbg:"#3b2300",paper:"#fffdf5",ink:"#3b2300",muted:"#8f6a2c",line:"#f8e7b5",tile:"#fff4cf",a1:"#e0601a",a2:"#2f8f73",a3:"#e9a400",btn:"#ffffff",fx:["☀️","🌻","🌼"],sym:["☀️","🌻","🍋","🌈","🦋","🍉","🌼","😎"],c:["🌻","☀️"]},
+ beach: {name:"Beach Day",     bg1:"#0096c7",bg2:"#ffe8b6",onbg:"#023047",paper:"#ffffff",ink:"#023047",muted:"#4f7a8c",line:"#d6eef5",tile:"#e9f7fb",a1:"#e06c00",a2:"#1b87a3",a3:"#f2a900",btn:"#ffffff",fx:["🌊","🐚","🫧"],sym:["🌊","🐚","🏖️","🍹","🐠","⛱️","🦀","🌴"],c:["🐚","🐠"]},
+ clouds:{name:"Cotton Clouds", bg1:"#b8a9e8",bg2:"#ffd1e8",onbg:"#2e2050",paper:"#ffffff",ink:"#2e2050",muted:"#7b6fa3",line:"#ebe4fa",tile:"#f5f1ff",a1:"#8a3ccf",a2:"#e0558f",a3:"#3fb6dc",btn:"#ffffff",fx:["☁️","💫","🫧"],sym:["☁️","🦄","🌈","💫","🪽","🫧","🌙","🎐"],c:["💫","☁️"]},
+ aurora:{name:"Aurora",        dark:1,bg1:"#04202b",bg2:"#1b6b5a",onbg:"#e0fff5",paper:"#0e2a33",ink:"#e6fffa",muted:"#8fc7bb",line:"#1d4a52",tile:"#143a43",a1:"#7cffcb",a2:"#c77dff",a3:"#ffd166",btn:"#03241b",fx:["✨","🌌","💚"],sym:["🌌","✨","🦊","🏔️","🌲","💚","🌠","🔥"],c:["✨","💚"]}
+};
+const MOODS = [
+ {id:"miss", e:"🥺", label:"Missing you", sub:"Moonlit · Rainy",   t:["moon","rain"]},
+ {id:"rom",  e:"🌹", label:"Romantic",    sub:"Roses · Candles",  t:["rose","candle"]},
+ {id:"play", e:"😜", label:"Playful",     sub:"Candy · Arcade",   t:["candy","arcade"]},
+ {id:"cozy", e:"☕", label:"Cozy",        sub:"Chai · Winter",    t:["chai","snow"]},
+ {id:"happy",e:"☀️", label:"Happy",       sub:"Sunshine · Beach", t:["sun","beach"]},
+ {id:"dream",e:"🌙", label:"Dreamy",      sub:"Clouds · Aurora",  t:["clouds","aurora"]}
+];
+const GAMES = {
+ puzzle:{icon:"🧩", title:"Photo puzzle",      how:"Slide the tiles to rebuild your photo. Fewer moves wins.", better:"low", unit:"moves", short:"Rebuild your photo"},
+ match: {icon:"🃏", title:"Memory match",      how:"Flip two cards at a time and find every pair. Fewer moves wins.", better:"low", unit:"moves", short:"Find the pairs"},
+ likely:{icon:"💬", title:"Who's more likely", how:"Answer 8 questions about you two. Then see how many you both answered the same.", better:"agree", short:"Quiz about you two"},
+ catch: {icon:"💖", title:"Catch the love",    how:"Tap the falling hearts before time runs out. Gold ones are worth 3.", better:"high", unit:"points", short:"Tap falling hearts"},
+ ttt:   {icon:"⭕", title:"Beat the bot",      how:"Win or draw against the computer at tic-tac-toe. A win beats a draw.", better:"high", short:"Tic-tac-toe vs a bot"}
+};
+const ORDER = ["puzzle","match","likely","catch","ttt"];
+
+const HOME_NOTES = ["Home is wherever you two are on the same sofa.","Tonight's challenge: make tea for each other, exactly how the other likes it.","Tonight's challenge: no phones for the next 20 minutes. Just you two.","The best part of any day is the end of it, together.","Tonight's challenge: tell each other one thing you noticed today.","You two make ordinary evenings feel special.","Tonight's challenge: slow dance to the next song that plays.","Same house, same jokes, same heart.","Tonight's challenge: plan a tiny trip for next weekend.","Love is sharing the last bite and pretending you're full.","Tonight's challenge: say three things you're grateful for about each other.","Every day with you two is a little love story.","Tonight's challenge: cook a meal together, even a silly one.","Two people, one blanket, endless talks.","Tonight's challenge: look through your oldest photos together.","Still choosing each other, every single day."];
+const FUNNY_NOTES = ["Warning: this couple is dangerously cute.","You two are the reason the snacks never last.","Scientists confirm: you two are 99% chaos, 1% sleep.","Your love is strong. Your Wi-Fi, not always.","Official rule: the loser of the next level makes the tea.","You two laugh at your own jokes. Respect.","Tonight's challenge: send each other your worst selfie.","Relationship status: arguing over who is funnier.","Tonight's challenge: speak only in movie quotes for 2 minutes.","You two are proof that weird plus weird equals perfect.","Tonight's challenge: do your best impression of each other.","Fun fact: the person reading this owes the other a hug."];
+const HOME_DATES = ["Cook together","Movie fort","Photo walk","Dance break","Dessert run","Memory lane","Spa night","Stargazing"];
+const HOME_DATE_DESC = ["Make tonight's dinner as a team, one chef and one helper.","Build a blanket fort and watch a movie inside it.","Walk outside and take 10 photos of each other.","Put on your favourite song and dance in the living room.","Go out together and get your favourite dessert.","Look through your oldest photos and tell the stories.","Face masks, soft music and no phones for an hour.","Find a dark spot and count the stars together."];
+const SILLY_DARES = ["send a selfie with your silliest face","sing one line of a song in a voice note","do your best impression of the winner","send a voice note in a cartoon voice","let the winner pick your profile picture for a day","tell the winner your most embarrassing story"];
+const ROM_PRIZES = ["send the winner a sweet voice note","write the winner a three-line love poem","tell the winner what you love most about them","plan the winner's favourite date","send the winner a photo that made you think of them","say I love you in a brand-new way"];
+
+// ---------- the game design (built from the setup questions) ----------
+const STYLES = {
+ comp: {e:"🏆", label:"Competitive", sub:"We love to win", name:"Showdown", rule:"Every level has a winner. Keep score and brag about it."},
+ team: {e:"🤝", label:"Team players", sub:"We play as one", name:"Team Quest", rule:"No winners or losers. Your scores add up as one team."},
+ silly:{e:"🤪", label:"Silly", sub:"We laugh at everything", name:"Giggle Games", rule:"Lose a level and you do a silly dare for the winner."},
+ rom:  {e:"💕", label:"Romantic", sub:"We're soft for each other", name:"Love Story", rule:"Lose a level and you owe the winner something sweet."}
+};
+const STYLE_IDS = ["comp","team","silly","rom"];
+const LENS = [{e:"⚡",label:"Quick",sub:"About 5 minutes",rule:"Short rounds: 5 quiz questions, 15-second catch, small card games."},
+              {e:"🌙",label:"Chill",sub:"About 15 minutes",rule:"Normal rounds: 8 quiz questions, 20-second catch."},
+              {e:"🔥",label:"All night",sub:"As long as we want",rule:"Long rounds: bigger card games and a 25-second catch."}];
+const DIFFS = [{e:"🙂",label:"Easy",sub:"Relaxed and sweet"},{e:"😎",label:"Medium",sub:"A little challenge"},{e:"😈",label:"Hard",sub:"Bring it on"}];
+const popcount = n => { let c=0; while(n){ c+=n&1; n>>=1; } return c; };
+function encodeD(d){ const n=(d.sit==='ld'?0:1)|(STYLE_IDS.indexOf(d.style)<<1)|(d.len<<3)|(d.diff<<5)|(d.mask<<7);
+  const c=ALPH[n&31]+ALPH[(n>>5)&31]+ALPH[(n>>10)&31]; return c+ALPH[cyrb53(c+SECRET)%32]; }
+function decodeD(code){ code=String(code||'').toUpperCase().trim(); if(code.length!==4) return null; const c=code.slice(0,3);
+  if(ALPH[cyrb53(c+SECRET)%32]!==code[3]) return null; const v=[...c].map(ch=>ALPH.indexOf(ch)); if(v.some(x=>x<0)) return null;
+  const n=v[0]|(v[1]<<5)|(v[2]<<10), d={sit:n&1?'home':'ld', style:STYLE_IDS[(n>>1)&3], len:(n>>3)&3, diff:(n>>5)&3, mask:(n>>7)&31};
+  if(d.len>2||d.diff>2||popcount(d.mask)<2) return null; d.code=code; return d; }
+let D = null;
+const GLIST = () => ORDER.filter((_,i)=>(D.mask>>i)&1);
+const gameTitle = () => `${CONFIG.her} & ${CONFIG.him}'s ${STYLES[D.style].name}`;
+const gameLink = () => location.href.split('#')[0].split('?')[0]+'?g='+D.code;
+function setDesign(d){ D=d; store.set('design',d.code); MODE=d.sit==='ld'?'two':'one'; store.set('mode',MODE);
+  try{ history.replaceState(null,'',location.pathname+'?g='+d.code); }catch(e){} }
+
+// ---------- helpers ----------
+const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
+const V = $('#view');
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function cyrb53(str, seed=0){ let h1=0xdeadbeef^seed, h2=0x41c6ce57^seed;
+  for(let i=0,ch;i<str.length;i++){ ch=str.charCodeAt(i); h1=Math.imul(h1^ch,2654435761); h2=Math.imul(h2^ch,1597334677); }
+  h1=Math.imul(h1^(h1>>>16),2246822507); h1^=Math.imul(h2^(h2>>>13),3266489909);
+  h2=Math.imul(h2^(h2>>>16),2246822507); h2^=Math.imul(h1^(h1>>>13),3266489909);
+  return 4294967296*(2097151&h2)+(h1>>>0); }
+const SECRET = CONFIG.her+'|'+CONFIG.him+'|'+CONFIG.lock;
+const NS = 'gn2_'+cyrb53(SECRET).toString(36)+'_';
+const store = { get(k,d){ try{ const v=localStorage.getItem(NS+k); return v==null?d:JSON.parse(v); }catch(e){ return d; } },
+                set(k,v){ try{ localStorage.setItem(NS+k,JSON.stringify(v)); }catch(e){} } };
+const nm = r => CONFIG[r];
+const other = r => r==='her'?'him':'her';
+const starterOf = L => L%2 ? 'her' : 'him';
+const gameOf = L => GLIST()[(L-1)%GLIST().length];
+const tierOf = L => Math.floor((L-1)/GLIST().length) + D.diff;
+const clamp = x => Math.max(0,Math.min(255,Math.round(x)));
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+// level keys: 6 characters that prove a partner finished a level and carry their result
+const ALPH = "23456789ABCDEFGHJKLMNPQRSTUVWXYZ";
+function makeKey(L, role, p){ let n=cyrb53(SECRET+'|'+D.code+'|'+L+'|'+role+'|'+p), s='';
+  for(let i=0;i<6;i++){ s+=ALPH[n%32]; n=Math.floor(n/32); } return s.slice(0,3)+'-'+s.slice(3); }
+function readKey(code, L, role){ const c=String(code).toUpperCase().replace(/[^A-Z0-9]/g,'').replace(/O/g,'0').replace(/I/g,'1');
+  if(c.length!==6) return null; for(let p=0;p<256;p++) if(makeKey(L,role,p).replace('-','')===c) return p; return null; }
+
+// ---------- sound ----------
+let AC=null, soundOn=store.get('sound',true);
+function sfx(f=660,d=.09,type="triangle",v=.07){ if(!soundOn) return; try{
+  AC=AC||new (window.AudioContext||window.webkitAudioContext)();
+  const o=AC.createOscillator(),g=AC.createGain(); o.type=type; o.frequency.value=f;
+  g.gain.setValueAtTime(v,AC.currentTime); g.gain.exponentialRampToValueAtTime(.0001,AC.currentTime+d);
+  o.connect(g).connect(AC.destination); o.start(); o.stop(AC.currentTime+d); }catch(e){} }
+const bgm = CONFIG.music ? new Audio(CONFIG.music) : {play(){},pause(){},currentTime:0}; if(CONFIG.music){ bgm.loop=true; bgm.preload='auto'; bgm.volume=.4; }
+function startMusic(){ if(!soundOn) return; const p=bgm.play(); if(p&&p.catch) p.catch(()=>{}); }
+document.addEventListener('pointerdown', startMusic, {once:true});
+document.addEventListener('visibilitychange',()=>{ if(document.hidden) bgm.pause(); });
+function setSoundUI(){ $('#snd').textContent=soundOn?'♪':'×'; $('#snd').setAttribute('aria-label',soundOn?'Music on':'Music off'); }
+$('#snd').onclick=()=>{ soundOn=!soundOn; store.set('sound',soundOn); setSoundUI(); soundOn?startMusic():bgm.pause(); };
+document.addEventListener('visibilitychange',()=>{ if(!document.hidden && soundOn && bgm.currentTime>0) startMusic(); });
+setSoundUI();
+
+// ---------- confetti + themed background ----------
+const fx=$('#fx'), fcx=fx.getContext('2d'); let parts=[], fraf=0;
+function cssv(n){ return getComputedStyle(document.documentElement).getPropertyValue(n).trim(); }
+function confetti(){ if(reduce) return; fx.width=innerWidth; fx.height=innerHeight; const cols=['--a1','--a2','--a3'].map(cssv);
+  for(let i=0;i<110;i++) parts.push({x:innerWidth/2,y:innerHeight/3,vx:(Math.random()-.5)*13,vy:Math.random()*-12-3,r:Math.random()*7+3,c:cols[i%3],a:Math.random()*6,life:95});
+  if(!fraf) floop(); }
+function floop(){ fcx.clearRect(0,0,fx.width,fx.height);
+  parts.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.vy+=.35;p.a+=.2;p.life--;fcx.save();fcx.translate(p.x,p.y);fcx.rotate(p.a);fcx.fillStyle=p.c;fcx.fillRect(-p.r/2,-p.r/4,p.r,p.r/2);fcx.restore();});
+  parts=parts.filter(p=>p.life>0&&p.y<fx.height+20); fraf=parts.length?requestAnimationFrame(floop):0; if(!fraf) fcx.clearRect(0,0,fx.width,fx.height); }
+const win=()=>{ [523,659,784,1047].forEach((f,i)=>setTimeout(()=>sfx(f,.15),i*110)); confetti(); };
+const bg=$('#bgfx'), bcx=bg.getContext('2d'); let flo=[], braf=0;
+function startBg(t){ cancelAnimationFrame(braf); const dpr=Math.min(2,devicePixelRatio||1); bg.width=innerWidth*dpr; bg.height=innerHeight*dpr;
+  flo=Array.from({length:16},()=>({x:Math.random()*innerWidth,y:Math.random()*innerHeight,s:16+Math.random()*22,v:.2+Math.random()*.5,w:Math.random()*6,e:t.fx[Math.floor(Math.random()*t.fx.length)]}));
+  const draw=()=>{ bcx.setTransform(dpr,0,0,dpr,0,0); bcx.clearRect(0,0,innerWidth,innerHeight); bcx.globalAlpha=.28;
+    flo.forEach(f=>{ if(!reduce){ f.y-=f.v; f.w+=.01; if(f.y<-40){ f.y=innerHeight+30; f.x=Math.random()*innerWidth; } }
+      bcx.font=f.s+'px serif'; bcx.fillText(f.e,f.x+Math.sin(f.w)*14,f.y); });
+    if(!reduce && !document.hidden) braf=requestAnimationFrame(draw); };
+  draw(); }
+document.addEventListener('visibilitychange',()=>{ if(!document.hidden && THEME) startBg(THEMES[THEME]); });
+addEventListener('resize',()=>{ if(THEME) startBg(THEMES[THEME]); });
+
+// ---------- themes ----------
+let ME=store.get('me',null), MODE=store.get('mode','two'), MOOD=store.get('mood',null), THEME=null;
+function applyTheme(id, announce){ const t=THEMES[id]; THEME=id; store.set('theme',id); const r=document.documentElement.style;
+  ['bg1','bg2','onbg','paper','ink','muted','line','tile','a1','a2','a3','btn'].forEach(k=>r.setProperty('--'+k,t[k]));
+  r.colorScheme=t.dark?'dark':'light'; $('#themeChip').textContent=(MOODS.find(m=>m.t.includes(id))||{e:'🎨'}).e+' '+t.name+' ▾';
+  startBg(t); if(announce) toast('New theme: '+t.name); }
+function pickTheme(moodId){ const pool=MOODS.find(m=>m.id===moodId).t, last=store.get('theme',null);
+  const options=pool.filter(x=>x!==last); return options[Math.floor(Math.random()*options.length)]||pool[0]; }
+function nextTheme(){ const m=MOODS.find(m=>m.id===MOOD); if(!m) return; applyTheme(m.t.find(x=>x!==THEME)||m.t[0], true); }
+let toastT=0; function toast(msg){ const t=$('#toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove('show'),2400); }
+
+// ---------- game state ----------
+const SKEY = () => 's_'+D.code+'_'+(MODE==='one'?'one':ME);
+let S=null;
+function loadState(){ S=store.get(SKEY(),null) || {lvl:1,phase:null,mine:null,theirs:null,skip:null,lastKey:null,a:null,wins:{her:0,him:0},agree:0,counted:0};
+  if(MODE==='two' && !S.phase) S.phase = starterOf(S.lvl)===ME ? 'play' : 'await';
+  if(MODE==='one' && !S.phase) S.phase='a'; save(); }
+const save = () => store.set(SKEY(),S);
+function enterLevel(L, theirs){ S.lvl=L; S.mine=null; S.theirs=theirs??null; S.a=null;
+  S.phase = MODE==='one' ? 'a' : (starterOf(L)===ME || theirs!=null ? 'play' : 'await'); save(); nextTheme(); }
+
+// ---------- views ----------
+function show(html){ V.innerHTML=html; window.scrollTo({top:0,behavior:reduce?'auto':'smooth'}); }
+function chrome(on){ $('#top').hidden=!on; if(on&&S) $('#lvChip').textContent='Level '+S.lvl; }
+
+function vLock(){ chrome(false); let typed='';
+  show(`<section class="card"><span class="eyebrow">${CONFIG.from?'A gift from '+esc(CONFIG.from):'A gift for two'}</span>
+    <h1>For ${esc(nm('her'))} &amp; ${esc(nm('him'))}</h1>
+    <p class="muted">${esc(CONFIG.lockHint)}</p><div class="code" id="code"></div><div class="pad" id="pad"></div></section>`);
+  const code=$('#code'), draw=()=>code.innerHTML=[...CONFIG.lock].map((_,i)=>`<i class="${i<typed.length?'f':''}"></i>`).join('');
+  ['1','2','3','4','5','6','7','8','9','⌫','0','✓'].forEach(k=>{ const b=document.createElement('button'); b.textContent=k;
+    b.setAttribute('aria-label',k==='⌫'?'Delete':k==='✓'?'Unlock':k);
+    b.onclick=()=>{ if(k==='⌫') typed=typed.slice(0,-1); else if(k!=='✓'&&typed.length<CONFIG.lock.length) typed+=k; sfx(500,.04); draw();
+      if(typed.length===CONFIG.lock.length){ if(typed===CONFIG.lock){ store.set('unlocked',true); win(); setTimeout(afterUnlock,500); }
+        else { code.classList.add('bad'); sfx(160,.25,'sawtooth',.05); setTimeout(()=>{ code.classList.remove('bad'); typed=''; draw(); },450); } } };
+    $('#pad').appendChild(b); }); draw(); }
+
+let A = {sit:null, who:null, style:null, mask:31, len:1, diff:1};
+function setupSteps(){ return ['sit'].concat(A.sit==='ld'?['who']:[]).concat(['style','games','len','diff']); }
+function vSetup(i){ chrome(false); i=i||0; const steps=setupSteps(), id=steps[i], tot=steps.length;
+  const opt=(v,e,label,sub,on)=>`<button class="mood${on?' on':''}" data-v="${v}" aria-pressed="${on?'true':'false'}"><b>${e}</b>${label}<small>${sub}</small></button>`;
+  const Q = {
+    sit:  ["Where are you two right now?", `<div class="moods">${opt('ld','✈️','Far apart','Long distance, two phones',A.sit==='ld')}${opt('home','🏠','Together','Same place, one phone',A.sit==='home')}</div>`],
+    who:  ["Who's holding this phone?", `<div class="moods">${opt('her','👩',esc(nm('her')),esc(CONFIG.herPlace),A.who==='her')}${opt('him','👨',esc(nm('him')),esc(CONFIG.himPlace),A.who==='him')}</div>`],
+    style:["What kind of couple are you?", `<div class="moods">${STYLE_IDS.map(k=>opt(k,STYLES[k].e,STYLES[k].label,STYLES[k].sub,A.style===k)).join('')}</div>`],
+    games:["Which games sound fun?", `<p class="muted small">Tap to turn games on or off. Keep at least two.</p><div class="moods">${ORDER.map((g,k)=>opt(k,GAMES[g].icon,GAMES[g].title,GAMES[g].short,(A.mask>>k)&1)).join('')}</div>
+            <button class="btn big" id="cont">Continue</button>`],
+    len:  ["How much time do you have?", `<div class="moods">${LENS.map((l,k)=>opt(k,l.e,l.label,l.sub,A.len===k)).join('')}</div>`],
+    diff: ["How tough should the games be?", `<div class="moods">${DIFFS.map((l,k)=>opt(k,l.e,l.label,l.sub,A.diff===k)).join('')}</div>`]
+  }[id];
+  show(`<section class="card"><div class="row between"><span class="eyebrow">Design your game · ${i+1} of ${tot}</span>${i?'<button class="link" id="qBack">Back</button>':''}</div>
+    <div class="bar"><i style="width:${i/tot*100}%"></i></div><h2>${Q[0]}</h2>${Q[1]}</section>
+    ${i===0?`<p class="credit">Answer ${tot} quick questions and we'll build a game just for you two.</p>`:''}`);
+  const next=()=>{ const st=setupSteps(); st.indexOf(id)+1<st.length ? vSetup(st.indexOf(id)+1) : finishSetup(); };
+  $$('.mood').forEach(b=>b.onclick=()=>{ const v=b.dataset.v; sfx(700,.06);
+    if(id==='games'){ A.mask^=1<<+v; const on=(A.mask>>+v)&1; b.classList.toggle('on',!!on); b.setAttribute('aria-pressed',on?'true':'false'); $('#cont').disabled=popcount(A.mask)<2; return; }
+    if(id==='len'||id==='diff') A[id]=+v; else A[id]=v; b.classList.add('on'); setTimeout(next,180); });
+  if($('#cont')){ $('#cont').disabled=popcount(A.mask)<2; $('#cont').onclick=next; }
+  if($('#qBack')) $('#qBack').onclick=()=>vSetup(i-1); }
+function finishSetup(){ const d=decodeD(encodeD(A)); setDesign(d); if(MODE==='two'){ ME=A.who; store.set('me',ME); }
+  S=null; loadState(); win(); vReady(true); }
+function designHTML(){ const st=STYLES[D.style];
+  return `<div class="tags"><span class="tag">${D.sit==='ld'?'✈️ Long distance':'🏠 Together'}</span><span class="tag">${st.e} ${st.label}</span>
+    <span class="tag">${LENS[D.len].e} ${LENS[D.len].label}</span><span class="tag">${DIFFS[D.diff].e} ${DIFFS[D.diff].label}</span></div>
+    <ul class="rules"><li><b>🎮</b><span>${GLIST().length} games take turns as levels: ${GLIST().map(g=>GAMES[g].title).join(', ')}. They get harder every lap.</span></li>
+    <li><b>${st.e}</b><span>${st.rule}</span></li><li><b>${LENS[D.len].e}</b><span>${LENS[D.len].rule}</span></li>
+    <li><b>${D.sit==='ld'?'🔑':'📱'}</b><span>${D.sit==='ld'?'Finish your turn, send the key on WhatsApp, and your partner unlocks their turn.':'Play your turn, then pass the phone. Both play every level.'}</span></li>
+    <li><b>${D.sit==='ld'?'📞':'🍿'}</b><span>Love notes and bonus ideas are picked for couples who are ${D.sit==='ld'?'far apart':'together'}.</span></li></ul>`; }
+function vReady(designer){ chrome(false); const O = MODE==='two' ? other(ME) : null;
+  show(`<section class="card"><span class="eyebrow">${designer?'Your game is ready':'Your partner designed this game'}</span><h1>${esc(gameTitle())}</h1>${designHTML()}
+    ${MODE==='two'&&designer?`<div class="stack"><h3>Send this game to ${esc(nm(O))}</h3><p class="muted small">They'll get exactly the same game, so your keys work for each other.</p>
+      <div class="grid2"><a class="btn wa" target="_blank" rel="noopener" href="https://wa.me/?text=${encodeURIComponent('🎮 I made us a game! Open it here: '+gameLink())}">WhatsApp</a>
+      <button class="btn alt" id="cpLink">Copy link</button></div><p class="muted small" style="word-break:break-all">${esc(gameLink())}</p></div>`:''}
+    ${!designer&&MODE==='two'?`<h3>Who's holding this phone?</h3><div class="moods">
+      <button class="mood" data-p="her"><b>👩</b>${esc(nm('her'))}<small>${esc(CONFIG.herPlace)}</small></button>
+      <button class="mood" data-p="him"><b>👨</b>${esc(nm('him'))}<small>${esc(CONFIG.himPlace)}</small></button></div>`
+      :'<button class="btn big" id="letsGo">Let\'s play</button>'}
+    ${designer?'<button class="link" id="redo">Change my answers</button>':''}</section>`);
+  if($('#letsGo')) $('#letsGo').onclick=()=>vMood();
+  $$('[data-p]').forEach(b=>b.onclick=()=>{ ME=b.dataset.p; store.set('me',ME); S=null; loadState(); sfx(700,.08); vMood(); });
+  if($('#cpLink')) $('#cpLink').onclick=e=>{ const b=e.target; try{ navigator.clipboard.writeText(gameLink()).then(()=>{ b.textContent='Copied ✓'; },()=>toast('Copy the link shown below')); }catch(err){ toast('Copy the link shown below'); } };
+  if($('#redo')) $('#redo').onclick=()=>vSetup(0); }
+function vSwitch(linkD){ chrome(false);
+  show(`<section class="card"><span class="eyebrow">New game link</span><h2>This link has a different game setup</h2>
+    <p class="muted">Switching gives you the same game as your partner. Your progress on this phone starts again from Level 1.</p>
+    <button class="btn big" id="sw">Switch to this game</button><button class="link" id="keep">Keep my current game</button></section>`);
+  $('#sw').onclick=()=>{ setDesign(linkD); ME=null; store.set('me',null); S=null; vReady(false); if(MODE==='one'){ loadState(); } };
+  $('#keep').onclick=()=>{ try{ history.replaceState(null,'',location.pathname+'?g='+D.code); }catch(e){} afterUnlock(true); }; }
+function afterUnlock(skipLink){ const linkD = skipLink ? null : decodeD(new URLSearchParams(location.search).get('g'));
+  if(linkD && (!D || linkD.code!==D.code)){
+    const prog = D && store.get('s_'+D.code+'_'+(MODE==='one'?'one':ME), null);
+    if(prog && prog.lvl>1) return vSwitch(linkD);
+    setDesign(linkD); ME=null; store.set('me',null); S=null; if(MODE==='one') loadState(); return vReady(false); }
+  if(!D) return vSetup(0);
+  if(MODE==='two' && !ME) return vReady(false);
+  loadState(); vMood(); }
+
+function vMood(back){ chrome(false);
+  const who = MODE==='one' ? 'you two' : nm(ME);
+  show(`<section class="card"><span class="eyebrow">New theme every time</span><h2>How are you feeling today, ${esc(who)}?</h2>
+    <p class="muted">Pick a mood and the whole game changes to match it.</p>
+    <div class="moods">${MOODS.map(m=>`<button class="mood" data-m="${m.id}"><b>${m.e}</b>${m.label}<small>${m.sub}</small></button>`).join('')}</div>
+    ${back?'<button class="link" id="mBack">Keep the current theme</button>':''}</section>`);
+  $$('.mood').forEach(b=>b.onclick=()=>{ MOOD=b.dataset.m; store.set('mood',MOOD); applyTheme(pickTheme(MOOD)); sfx(800,.1); vHome(); });
+  if(back) $('#mBack').onclick=vHome; }
+$('#themeChip').onclick=()=>vMood(true);
+
+function clocksHTML(){ return `<div class="clocks"><div class="clk"><span>${esc(CONFIG.herPlace)}</span><b id="cH">--</b></div><span aria-hidden="true">✈️</span>
+  <div class="clk"><span>${esc(CONFIG.himPlace)}</span><b id="cM">--</b></div></div>`; }
+function tickClocks(){ try{ const f=tz=>new Date().toLocaleTimeString('en-US',{timeZone:tz,hour:'numeric',minute:'2-digit'});
+  if($('#cH')){ $('#cH').textContent=f(CONFIG.herTz); $('#cM').textContent=f(CONFIG.himTz); } }catch(e){} }
+setInterval(tickClocks,30000);
+
+function pathHTML(){ const L=S.lvl, from=Math.max(1,L-2), to=from+5; let h='';
+  for(let i=from;i<=to;i++){ const g=GAMES[gameOf(i)], cls=i<L?'done':i===L?'cur':'lock';
+    if(i>from) h+=`<span class="seg ${i<=L?'done':''}"></span>`;
+    h+=`<span class="node ${cls}" title="Level ${i}">${i<L?'✓':g.icon}<small>${i===L?'Lv '+i:i}</small></span>`; }
+  return `<div class="path" aria-label="Level map">${h}</div>`; }
+function scoreHTML(){ if(D.style==='team') return `<div class="score solo"><div><b>${S.counted}</b><span>levels cleared together 🤝</span></div></div>
+  ${S.agree?`<p class="muted small" style="text-align:center">💞 You've answered ${S.agree} questions the same way so far</p>`:''}`;
+  return `<div class="score"><div><b>${S.wins.her}</b><span>${esc(nm('her'))}</span></div><span class="vs">LEVEL WINS</span>
+  <div><b>${S.wins.him}</b><span>${esc(nm('him'))}</span></div></div>
+  ${S.agree?`<p class="muted small" style="text-align:center">💞 You've answered ${S.agree} questions the same way so far</p>`:''}`; }
+function shareText(L,key){ return `💌 ${nm(ME)} finished Level ${L} of our game! Your key: ${key}\n${gameLink()}`; }
+function shareHTML(L,key){ return `<div class="key" aria-label="Your key">${key}</div>
+  <div class="grid2"><a class="btn wa" target="_blank" rel="noopener" href="https://wa.me/?text=${encodeURIComponent(shareText(L,key))}">WhatsApp</a>
+  <button class="btn alt" data-copy="${key}">Copy key</button></div>`; }
+function bindCopy(){ $$('[data-copy]').forEach(b=>b.onclick=()=>{ const t=b.dataset.copy;
+  const ok=()=>{ b.textContent='Copied ✓'; setTimeout(()=>b.textContent='Copy key',1600); };
+  try{ navigator.clipboard.writeText(t).then(ok,()=>selectKey()); }catch(e){ selectKey(); } }); }
+function selectKey(){ const k=$('.key'); if(!k) return; const r=document.createRange(); r.selectNodeContents(k); const s=getSelection(); s.removeAllRanges(); s.addRange(r); toast('Key selected — copy it'); }
+function keyInputHTML(label){ return `<label class="stack"><span style="font-weight:800">${label}</span>
+  <input class="keyin" id="keyIn" inputmode="text" autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="9" placeholder="ABC-123"></label>
+  <p class="err" id="keyErr"></p><button class="btn big" id="keyGo">Unlock</button>`; }
+
+function vHome(){ if(!S) loadState(); if(!THEME) applyTheme(store.get('theme','moon')); chrome(true);
+  const L=S.lvl, gid=gameOf(L), g=GAMES[gid], O=MODE==='two'?other(ME):null;
+  let status='';
+  if(MODE==='one'){
+    const p = S.phase==='a' ? starterOf(L) : other(starterOf(L));
+    status=`<div class="turn"><span class="av">${g.icon}</span><div class="t"><h3>Level ${L} · ${g.title}</h3>
+      <p class="muted small">${esc(nm(starterOf(L)))} goes first, then ${esc(nm(other(starterOf(L))))}.</p></div></div>
+      <button class="btn big" id="playBtn">${esc(nm(p))}, tap to play</button>`;
+  } else if(S.phase==='play'){
+    status=`<div class="turn"><span class="av">${g.icon}</span><div class="t"><h3>Your turn · Level ${L}</h3>
+      <p class="muted small">${g.title}. ${S.theirs!=null?esc(nm(O))+' already played. Can you beat them?':'You go first, then '+esc(nm(O))+' plays.'}</p></div></div>
+      <button class="btn big" id="playBtn">Play Level ${L}</button>
+      ${S.lastKey?`<button class="link" id="resend">Resend my last key to ${esc(nm(O))}</button><div id="resendBox"></div>`:''}`;
+  } else if(S.mine==null){
+    status=`<div class="turn"><span class="av">⏳</span><div class="t"><h3>${esc(nm(O))}'s turn · Level ${L}</h3>
+      <p class="muted small">${esc(nm(O))} plays ${g.title} first. When they send you a key, type it here to unlock your turn.</p></div></div>
+      ${keyInputHTML(esc(nm(O))+"'s key")}
+      ${S.lastKey?`<button class="link" id="resend">Resend my last key to ${esc(nm(O))}</button><div id="resendBox"></div>`:''}`;
+  } else {
+    status=`<div class="turn"><span class="av">✅</span><div class="t"><h3>You finished Level ${L}!</h3>
+      <p class="muted small">Send this key to ${esc(nm(O))} so they can play their turn.</p></div></div>
+      ${shareHTML(L,makeKey(L,ME,S.mine))}${keyInputHTML('When '+esc(nm(O))+' finishes, enter their key')}`;
+  }
+  const first = !store.get('seenHelp',false);
+  show(`<section class="card"><div class="row between"><span class="eyebrow">${MODE==='one'?'Playing together':'Hi '+esc(nm(ME))+' 👋'}</span>
+      <button class="link" id="photos">📸 Our photos</button></div>
+    ${MODE==='two'?clocksHTML():''}${pathHTML()}${status}</section>
+    <section class="card"><div class="row between"><h3>${esc(gameTitle())}</h3><button class="link" id="rules">Rules</button></div><div id="rulesBox" hidden>${designHTML()}</div></section>
+    ${first?`<section class="card"><h3>How it works</h3><ol class="steps">
+      <li>Each level is a new mini game. You take turns: ${esc(nm('her'))} starts odd levels, ${esc(nm('him'))} starts even ones.</li>
+      ${MODE==='two'?`<li>Finish your turn and you get a key. Send it on WhatsApp.</li><li>Your partner types the key to unlock their turn. When both finish, you see who won.</li>`:'<li>When one of you finishes, pass the phone. When both finish, you see who won.</li>'}
+      <li>The theme changes every level. Tap the theme at the top to match your mood.</li></ol>
+      <button class="btn alt" id="gotIt">Got it</button></section>`:''}
+    <section class="card">${scoreHTML()}</section>
+    <div class="row center">${MODE==='two'?'<button class="link" id="switch">Not '+esc(nm(ME))+'? Switch player</button>':''}
+      <button class="link" id="reset">Start over</button><button class="link" id="redesign">Redesign the game</button></div>`);
+  tickClocks();
+  const pb=$('#playBtn'); if(pb) pb.onclick=()=>vGame(MODE==='one'?(S.phase==='a'?starterOf(L):other(starterOf(L))):ME);
+  if($('#keyGo')){ const go=()=>onKey($('#keyIn').value); $('#keyGo').onclick=go; $('#keyIn').onkeydown=e=>{ if(e.key==='Enter') go(); }; }
+  if($('#resend')) $('#resend').onclick=()=>{ $('#resendBox').innerHTML=shareHTML(S.lastKey.L,S.lastKey.k); bindCopy(); $('#resend').hidden=true; };
+  if($('#gotIt')) $('#gotIt').onclick=()=>{ store.set('seenHelp',true); vHome(); };
+  $('#photos').onclick=vPhotos; $('#rules').onclick=()=>{ $('#rulesBox').hidden=!$('#rulesBox').hidden; };
+  if($('#switch')) $('#switch').onclick=()=>{ ME=other(ME); store.set('me',ME); S=null; loadState(); vHome(); };
+  $('#redesign').onclick=e=>{ const b=e.target; if(b.dataset.sure){ store.set(SKEY(),null); store.set('design',null); D=null; ME=null; store.set('me',null); S=null;
+    A={sit:null,who:null,style:null,mask:31,len:1,diff:1}; try{ history.replaceState(null,'',location.pathname); }catch(err){} vSetup(0); }
+    else { b.dataset.sure=1; b.textContent='Tap again: new design, progress resets'; } };
+  $('#reset').onclick=e=>{ const b=e.target; if(b.dataset.sure){ store.set(SKEY(),null); S=null; loadState(); vHome(); } else { b.dataset.sure=1; b.textContent='Tap again to erase progress on this phone'; } };
+  bindCopy(); const p=$('.path .cur'); if(p) p.scrollIntoView({inline:'center',block:'nearest'}); }
+
+function onKey(code){ const O=other(ME), L=S.lvl, err=$('#keyErr');
+  let p=readKey(code,L,O);
+  if(p!=null){ S.theirs=p; save(); sfx(880,.12);
+    if(S.mine==null){ S.phase='play'; save(); win(); toast(nm(O)+' finished! Your turn'); return vHome(); }
+    return vReveal(); }
+  p = S.mine!=null ? readKey(code,L+1,O) : null;
+  if(p!=null){ S.skip=p; save(); return vReveal(); }
+  err.textContent = `That key doesn't open Level ${L}. Check you typed the newest key ${nm(O)} sent.`; sfx(160,.25,'sawtooth',.05); }
+
+function vPhotos(){ chrome(true);
+  show(`<section class="card"><span class="eyebrow">Our photos</span><h2>A few favourites of you two</h2>
+    <div class="album">${CONFIG.album.map(s=>`<figure><img src="${esc(s)}" alt="Photo of ${esc(nm('her'))} and ${esc(nm('him'))}" loading="lazy"></figure>`).join('')}</div>
+    <button class="btn alt" id="back">Back to the game</button></section>`); $('#back').onclick=vHome; }
+
+// ---------- game host ----------
+function vGame(player){ chrome(true); const L=S.lvl, gid=gameOf(L), g=GAMES[gid], t=tierOf(L);
+  show(`<section class="card"><div class="row between"><span class="eyebrow">Level ${L} · ${esc(nm(player))}'s turn</span><button class="link" id="quit">Back to map</button></div>
+    <h2>${g.icon} ${g.title}</h2><p class="muted">${g.how}</p><div class="stack" id="area"></div></section>`);
+  $('#quit').onclick=vHome;
+  const done = payload => onPlayed(player, clamp(payload));
+  ({puzzle:gPuzzle, match:gMatch, likely:gLikely, catch:gCatch, ttt:gTTT})[gid]($('#area'), t, done);
+  window.__finish = done; }
+
+function onPlayed(player, payload){
+  if(MODE==='one'){
+    if(S.phase==='a'){ S.a=payload; S.phase='b'; save(); return vPass(); }
+    S.mine=S.a; S.theirs=payload; save(); return vReveal(starterOf(S.lvl));
+  }
+  S.mine=payload; S.lastKey={L:S.lvl,k:makeKey(S.lvl,ME,payload)}; save();
+  if(S.theirs!=null) return vSent(); S.phase='await'; save(); vHome(); }
+
+function vPass(){ const nxt=other(starterOf(S.lvl));
+  show(`<section class="card" style="text-align:center"><span class="eyebrow">Level ${S.lvl}</span><h1>📱➡️</h1>
+    <h2>Pass the phone to ${esc(nm(nxt))}</h2><p class="muted">No peeking at the score. It shows after both of you play.</p>
+    <button class="btn big" id="go">I'm ${esc(nm(nxt))}, my turn</button></section>`);
+  $('#go').onclick=()=>vGame(nxt); }
+
+function vSent(){ const O=other(ME), L=S.lvl;
+  show(`<section class="card"><span class="eyebrow">Level ${L} · done</span><h2>Send your key to ${esc(nm(O))}</h2>
+    <p class="muted">${esc(nm(O))} needs it to see who won this level.</p>${shareHTML(L,S.lastKey.k)}
+    <button class="btn big" id="see">See who won</button></section>`); bindCopy(); $('#see').onclick=()=>vReveal(); }
+
+function verdict(gid, pa, pb, ra, rb){ const g=GAMES[gid], nq=D.len===0?5:8;
+  if(pb==null) return {text:`${nm(rb)} has already moved ahead. On to the next level!`, w:null};
+  if(gid==='likely'){ let same=0; for(let i=0;i<nq;i++) if(((pa>>i)&1)===((pb>>i)&1)) same++;
+    return {text: same>=nq*.75?`You agreed on ${same} of ${nq}. You really know each other! 💞`: same>=nq/2?`You agreed on ${same} of ${nq}. Talk about the rest ${D.sit==='ld'?'on your next call':'over dinner'} 😄`:`Only ${same} of ${nq} the same! Time for a long chat 😂`, same, w:null}; }
+  if(D.style==='team'){ const sum=pa+pb;
+    return {text: gid==='ttt' ? `You both got past the bot (${pa+pb} of 4 team points). Level cleared together! 🤝` :
+      `Team total: ${sum} ${g.unit}. Level cleared together! 🤝`, w:null}; }
+  const better = g.better==='low' ? (a,b)=>a<b : (a,b)=>a>b;
+  if(pa===pb) return {text:"It's a tie! Perfect match 💞", w:'tie'};
+  const w = better(pa,pb)?ra:rb, lose=w===ra?rb:ra, L=S.lvl;
+  const extra = D.style==='silly' ? ` ${nm(lose)} must ${SILLY_DARES[L%SILLY_DARES.length]} 🤪` : D.style==='rom' ? ` ${nm(lose)}, ${ROM_PRIZES[L%ROM_PRIZES.length]} 💌` : '';
+  return {text:`${nm(w)} wins Level ${L}! 🏆${extra}`, w}; }
+function fmt(gid,p){ if(p==null) return '—'; if(gid==='ttt') return ['Lost','Draw','Win'][p]||p; if(gid==='likely') return (D.len===0?5:8)+' answers'; return p+' '+GAMES[gid].unit; }
+
+function vReveal(firstRole){ chrome(true); const L=S.lvl, gid=gameOf(L);
+  const ra = MODE==='one'?firstRole:ME, rb=other(ra), pa=S.mine, pb=S.skip!=null&&S.theirs==null?null:S.theirs;
+  const v=verdict(gid,pa,pb,ra,rb);
+  if(S.counted<L){ S.counted=L; if(v.w&&v.w!=='tie') S.wins[v.w]++; if(v.same) S.agree+=v.same; save(); }
+  const msg=freshMsg();
+  show(`<section class="card"><span class="eyebrow">Level ${L} complete</span><h1>🎉 Level ${L} done!</h1>
+    ${gid!=='likely'&&pb!=null?`<div class="cmp"><div class="${v.w===ra?'win':''}"><b>${fmt(gid,pa)}</b><span>${esc(nm(ra))}</span></div>
+      <div class="${v.w===rb?'win':''}"><b>${fmt(gid,pb)}</b><span>${esc(nm(rb))}</span></div></div>`:''}
+    <p class="verdict">${esc(v.text)}</p>${scoreHTML()}</section>
+    <section class="card"><span class="eyebrow">Your reward</span><h3>Scratch to reveal a love note</h3>
+      <div class="scr"><div class="under">${esc(msg)}</div><canvas id="scr"></canvas></div></section>
+    ${L%5===0?`<section class="card"><span class="eyebrow">Bonus</span><h3>${D.sit==='ld'?"Spin for tonight's call":'Spin for a date idea'}</h3>
+      <div class="wheelbox"><canvas id="wheel" width="600" height="600"></canvas><div class="pointer"></div></div>
+      <div class="result" id="wRes"></div><p class="muted" id="wDesc" style="text-align:center"></p><div class="row center"><button class="btn" id="spin">Spin</button></div></section>`:''}
+    <button class="btn big" id="next">Next level →</button>`);
+  win(); mountScratch(); if(L%5===0) mountWheel();
+  $('#next').onclick=()=>{ const skip=S.skip; S.skip=null; enterLevel(L+1, skip); vHome(); }; }
+
+function notePool(){ const base = D.sit==='ld' ? SCRATCH : HOME_NOTES; return D.style==='silly' ? FUNNY_NOTES.concat(base.slice(0,12)) : base; }
+function freshMsg(){ const pool=notePool(), key='seen_'+D.code+'_'+(MODE==='one'?'one':ME); let seen=store.get(key,[]);
+  let av=pool.map((_,i)=>i).filter(i=>!seen.includes(i)); if(!av.length){ seen=[]; av=pool.map((_,i)=>i); }
+  const i=av[Math.floor(Math.random()*av.length)]; store.set(key,seen.concat(i)); return pool[i]; }
+const wheelItems = () => D.sit==='ld' ? [DATES,DATE_DESC] : [HOME_DATES,HOME_DATE_DESC];
+
+// ---------- mini games ----------
+function placeholderImg(){ const c=document.createElement('canvas'); c.width=c.height=600; const g=c.getContext('2d');
+  const gr=g.createLinearGradient(0,0,600,600); gr.addColorStop(0,cssv('--a2')); gr.addColorStop(1,cssv('--a1')); g.fillStyle=gr; g.fillRect(0,0,600,600);
+  g.font='220px serif'; g.textAlign='center'; g.fillText('💞',300,330); g.fillStyle='#fff'; g.font='700 52px Fredoka, sans-serif'; g.fillText(CONFIG.her+' & '+CONFIG.him,300,500);
+  return c.toDataURL('image/jpeg',.85); }
+
+function gPuzzle(el, tier, done){ const n=tier>=2?4:3, N=n*n, blank=N-1, img=CONFIG.photo||placeholderImg();
+  el.innerHTML=`<div class="pz" style="grid-template-columns:repeat(${n},1fr)"></div>
+    <div class="row between"><span class="status">Moves: 0</span><button class="link" id="hint">Hide numbers</button></div>`;
+  const pz=el.querySelector('.pz'), stat=el.querySelector('.status'); let st=[...Array(N).keys()], moves=0, solved=false;
+  const adj=(a,b)=>Math.abs(a-b)===n||(Math.abs(a-b)===1&&Math.floor(a/n)===Math.floor(b/n));
+  let e=blank, prev=-1; for(let i=0;i<(n===3?90+tier*30:220);i++){ const nb=[e-n,e+n,e-1,e+1].filter(p=>p>=0&&p<N&&adj(p,e)&&p!==prev);
+    const p=nb[Math.floor(Math.random()*nb.length)]; [st[p],st[e]]=[st[e],st[p]]; prev=e; e=p; }
+  if(st.every((v,k)=>v===k)){ const a=st.indexOf(blank), b=a===0?1:a-1; [st[a],st[b]]=[st[b],st[a]]; }
+  const pos=v=>`${(v%n)*100/(n-1)}% ${Math.floor(v/n)*100/(n-1)}%`;
+  function draw(){ pz.innerHTML=''; st.forEach((v,i)=>{ const b=document.createElement('button'); b.className='tile'+(v===blank&&!solved?' blank':'');
+    if(v!==blank||solved){ b.style.backgroundImage=`url("${img}")`; b.style.backgroundSize=`${n*100}% ${n*100}%`; b.style.backgroundPosition=pos(v);
+      if(!solved) b.innerHTML=`<span>${v+1}</span>`; b.setAttribute('aria-label','Tile '+(v+1)); } else b.setAttribute('aria-label','Empty space');
+    b.onclick=()=>mv(i); pz.appendChild(b); }); }
+  function mv(i){ if(solved) return; const e=st.indexOf(blank); if(!adj(i,e)) return; [st[i],st[e]]=[st[e],st[i]]; moves++; sfx(520,.05); stat.textContent='Moves: '+moves;
+    if(st.every((v,k)=>v===k)){ solved=true; pz.classList.add('solved'); draw(); win(); stat.innerHTML=`<span class="earned">Solved in ${moves} moves!</span>`; setTimeout(()=>done(moves),1500); return; }
+    draw(); }
+  el.querySelector('#hint').onclick=e=>{ const h=pz.classList.toggle('hide'); e.target.textContent=h?'Show numbers':'Hide numbers'; };
+  draw(); }
+
+function gMatch(el, tier, done){ const pairs=Math.min(8,[4,6,7][D.len]+Math.max(0,tier-D.diff)+D.diff), sym=THEMES[THEME].sym.slice(0,pairs);
+  const deck=[...sym,...sym].sort(()=>Math.random()-.5); let open=[], moves=0, got=0, lock=false;
+  el.innerHTML=`<div class="mem"></div><span class="status">Moves: 0 · Pairs: 0/${pairs}</span>`;
+  const m=el.querySelector('.mem'), stat=el.querySelector('.status');
+  deck.forEach(s=>{ const b=document.createElement('button'); b.className='mc'; b.dataset.s=s; b.setAttribute('aria-label','Hidden card');
+    b.innerHTML=`<div class="in"><div class="b">?</div><div class="f">${s}</div></div>`; b.onclick=()=>flip(b); m.appendChild(b); });
+  function flip(b){ if(lock||b.classList.contains('up')||b.classList.contains('got')) return; b.classList.add('up'); b.setAttribute('aria-label',b.dataset.s); sfx(600,.05); open.push(b);
+    if(open.length<2) return; moves++; const [a,c]=open;
+    if(a.dataset.s===c.dataset.s){ a.classList.add('got'); c.classList.add('got'); open=[]; got++; sfx(880,.1);
+      if(got===pairs){ win(); stat.innerHTML=`<span class="earned">All pairs in ${moves} moves!</span>`; setTimeout(()=>done(moves),1300); return; } }
+    else { lock=true; setTimeout(()=>{ a.classList.remove('up'); c.classList.remove('up'); a.setAttribute('aria-label','Hidden card'); c.setAttribute('aria-label','Hidden card'); open=[]; lock=false; },750); }
+    stat.textContent=`Moves: ${moves} · Pairs: ${got}/${pairs}`; } }
+
+function quizList(){ if(D.sit==='ld') return LIKELY;
+  const far=/call|visit|distance|time difference|airport|online|apart|video|countdown|meeting|goodbye|voice note|delivery|mail|order food|internet|charge|3 a\.m\.|camera|text|message/;
+  const l=LIKELY.filter(q=>!far.test(q)); return l.slice(0,Math.floor(l.length/8)*8); }
+function roundQs(r){ const LIKELY=quizList(), R=LIKELY.length/8, cyc=Math.floor(r/R), i=r%R, order=LIKELY.map((_,k)=>k);
+  if(cyc>0){ let a=(cyc*2654435761)>>>0; const rnd=()=>{ a=(a+0x6D2B79F5)|0; let t=Math.imul(a^(a>>>15),1|a); t=(t+Math.imul(t^(t>>>7),61|t))^t; return ((t^(t>>>14))>>>0)/4294967296; };
+    for(let k=order.length-1;k>0;k--){ const j=Math.floor(rnd()*(k+1)); [order[k],order[j]]=[order[j],order[k]]; } }
+  return order.slice(i*8,i*8+8).map(k=>LIKELY[k]); }
+function gLikely(el, tier, done){ const N=D.len===0?5:8, qs=roundQs(Math.floor((S.lvl-1)/GLIST().length)).slice(0,N); let i=0, bits=0;
+  el.innerHTML=`<span class="status" id="qn"></span><div class="bar"><i id="qb"></i></div><div class="q" id="qq"></div>
+    <div class="pick"><button class="btn" data-w="0">${esc(nm('her'))}</button><button class="btn b2" data-w="1">${esc(nm('him'))}</button></div>`;
+  const showQ=()=>{ el.querySelector('#qn').textContent=`Question ${i+1} of ${N}`; el.querySelector('#qb').style.width=(i/N*100)+'%';
+    el.querySelector('#qq').textContent='Who is more likely to '+qs[i]+'?'; };
+  el.querySelectorAll('.pick .btn').forEach(b=>b.onclick=()=>{ if(i>=N) return; if(b.dataset.w==='1') bits|=1<<i; sfx(b.dataset.w==='1'?500:700,.08); i++;
+    if(i<N) return showQ(); el.querySelector('#qb').style.width='100%'; el.querySelector('#qq').textContent='All answered! 💌'; win(); setTimeout(()=>done(bits),900); });
+  showQ(); }
+
+function gCatch(el, tier, done){ const TIME=[15,20,25][D.len], target=Math.round(TIME*(.7+.2*Math.min(tier,4))), T=THEMES[THEME]; let score=0, left=TIME, timer=0, spawnT=0;
+  el.innerHTML=`<div class="hud"><span>Score <b id="cs">0</b> / ${target}</span><span>Time <b id="ct">${TIME}</b>s</span></div><div class="bar"><i id="cb"></i></div>
+    <div class="field" id="field"><div class="overlay" id="cov"><div class="stack" style="align-items:center"><p style="font-size:44px">${T.c[0]} ${T.c[1]}</p>
+    <p>Reach <b>${target}</b> points in ${TIME} seconds.</p><button class="btn" id="cgo">Start</button></div></div></div>`;
+  const f=el.querySelector('#field'), ov=el.querySelector('#cov');
+  const upd=()=>{ el.querySelector('#cs').textContent=score; el.querySelector('#cb').style.width=Math.min(100,score/target*100)+'%'; };
+  function spawn(){ const h=document.createElement('button'), gold=Math.random()<.15; h.className='ht'; h.textContent=gold?T.c[1]:T.c[0]; h.setAttribute('aria-label',gold?'Bonus':'Heart');
+    const dur=(2.3+Math.random()*1.5)*(1-((TIME-left)/(TIME*3))); h.style.left=Math.random()*(f.clientWidth-48)+'px'; h.style.top='-50px';
+    h.animate([{transform:'translateY(0)'},{transform:`translateY(${f.clientHeight+60}px)`}],{duration:dur*1000,easing:'linear'}).onfinish=()=>h.remove();
+    h.onpointerdown=e=>{ e.preventDefault(); if(h.classList.contains('pop')) return; h.classList.add('pop'); score+=gold?3:1; upd(); sfx(gold?990:760,.06); setTimeout(()=>h.remove(),250); };
+    f.appendChild(h); }
+  function start(){ score=0; left=TIME; upd(); el.querySelector('#ct').textContent=TIME; ov.hidden=true; spawnT=setInterval(spawn,400);
+    timer=setInterval(()=>{ left--; el.querySelector('#ct').textContent=left;
+      if(left<=0){ clearInterval(timer); clearInterval(spawnT); setTimeout(()=>f.querySelectorAll('.ht').forEach(h=>h.remove()),300);
+        if(score>=target){ win(); ov.innerHTML=`<p class="earned">${score} points! Level cleared 🎉</p>`; ov.hidden=false; setTimeout(()=>done(score),1300); }
+        else { sfx(200,.3,'sawtooth',.04); ov.innerHTML=`<div class="stack" style="align-items:center"><p><b>${score}</b> points. You need ${target}.</p><button class="btn" id="cagain">Try again</button></div>`;
+          ov.hidden=false; ov.querySelector('#cagain').onclick=start; } } },1000); }
+  el.querySelector('#cgo').onclick=start;
+  const stop=new MutationObserver(()=>{ if(!document.body.contains(f)){ clearInterval(timer); clearInterval(spawnT); stop.disconnect(); } }); stop.observe(V,{childList:true}); }
+
+function gTTT(el, tier, done){ const smart=Math.min(.95,.7+.1*tier), L=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]]; let b, over;
+  el.innerHTML=`<div class="ttt"></div><div class="row between"><span class="status" id="ts"></span><button class="btn alt" id="tagain" hidden>Try again</button></div>`;
+  const g=el.querySelector('.ttt'), st=el.querySelector('#ts'), wins=(bb,p)=>L.find(l=>l.every(k=>bb[k]===p));
+  function reset(){ b=Array(9).fill(null); over=false; el.querySelector('#tagain').hidden=true; g.innerHTML='';
+    for(let i=0;i<9;i++){ const c=document.createElement('button'); c.setAttribute('aria-label','Empty square'); c.onclick=()=>play(i); g.appendChild(c); } st.textContent='Your turn ❤️'; }
+  function put(i,p){ b[i]=p; g.children[i].textContent=p==='me'?'❤️':'🤖'; g.children[i].setAttribute('aria-label',p==='me'?'You':'Computer'); }
+  function cpu(){ const free=b.map((v,i)=>v?null:i).filter(v=>v!==null), tw=p=>free.find(i=>{ b[i]=p; const w=wins(b,p); b[i]=null; return w; });
+    let m=tw('cpu'); if(m===undefined&&Math.random()<smart) m=tw('me'); if(m===undefined&&!b[4]) m=4; if(m===undefined) m=free[Math.floor(Math.random()*free.length)]; return m; }
+  function end(r,line){ over=true; if(line) line.forEach(k=>g.children[k].classList.add('w'));
+    if(r===0){ st.textContent='The bot won. Try again!'; sfx(200,.3,'sawtooth',.04); el.querySelector('#tagain').hidden=false; return; }
+    win(); st.innerHTML=`<span class="earned">${r===2?'You win!':'A draw. Level cleared!'}</span>`; setTimeout(()=>done(r),1300); }
+  function play(i){ if(over||b[i]) return; put(i,'me'); sfx(700,.07); let w=wins(b,'me'); if(w) return end(2,w); if(b.every(Boolean)) return end(1);
+    over=true; st.textContent='Bot is thinking…'; setTimeout(()=>{ over=false; const m=cpu(); put(m,'cpu'); sfx(450,.07);
+      const c=wins(b,'cpu'); if(c) return end(0,c); if(b.every(Boolean)) return end(1); st.textContent='Your turn ❤️'; },450); }
+  el.querySelector('#tagain').onclick=reset; reset(); }
+
+// ---------- rewards ----------
+function mountScratch(){ const c=$('#scr'); if(!c) return; requestAnimationFrame(()=>{ const r=c.getBoundingClientRect(), dpr=devicePixelRatio||1;
+  c.width=r.width*dpr; c.height=r.height*dpr; const g=c.getContext('2d'); g.scale(dpr,dpr);
+  const gr=g.createLinearGradient(0,0,r.width,r.height); gr.addColorStop(0,cssv('--a1')); gr.addColorStop(1,cssv('--a2')); g.fillStyle=gr; g.fillRect(0,0,r.width,r.height);
+  g.fillStyle=cssv('--btn'); g.font='600 20px Fredoka, sans-serif'; g.textAlign='center'; g.fillText('Scratch here ✦',r.width/2,r.height/2+7); g.globalCompositeOperation='destination-out';
+  let down=false,last=null,n=0,gone=false; const pt=e=>{ const b=c.getBoundingClientRect(); return {x:e.clientX-b.left,y:e.clientY-b.top}; };
+  const draw=p=>{ g.lineWidth=38; g.lineCap='round'; g.beginPath(); g.moveTo((last||p).x,(last||p).y); g.lineTo(p.x,p.y); g.stroke(); last=p;
+    if(++n%12===0&&!gone){ const d=g.getImageData(0,0,c.width,c.height).data; let clr=0; for(let i=3;i<d.length;i+=64) if(d[i]===0) clr++;
+      if(clr/(d.length/64)>.5){ gone=true; c.style.opacity=0; setTimeout(()=>c.hidden=true,500); sfx(880,.15); } } };
+  c.onpointerdown=e=>{ down=true; last=null; c.setPointerCapture(e.pointerId); draw(pt(e)); };
+  c.onpointermove=e=>{ if(down) draw(pt(e)); }; c.onpointerup=c.onpointercancel=()=>{ down=false; }; }); }
+
+function mountWheel(){ const [DATES,DATE_DESC]=wheelItems(); let ang=0, spinning=false; const c=$('#wheel'), g=c.getContext('2d'), R=290;
+  function draw(){ const cols=['--a1','--a2','--a3','--tile'].map(cssv), ink=cssv('--ink'), btn=cssv('--btn'); g.clearRect(0,0,600,600); g.save(); g.translate(300,300); g.rotate(ang);
+    const seg=Math.PI*2/DATES.length; DATES.forEach((d,i)=>{ g.beginPath(); g.moveTo(0,0); g.arc(0,0,R,i*seg,(i+1)*seg); g.closePath(); g.fillStyle=cols[i%4]; g.fill();
+      g.save(); g.rotate(i*seg+seg/2); g.textAlign='right'; g.fillStyle=i%4===3?ink:btn; g.font='600 24px Fredoka, sans-serif'; g.fillText(d,R-18,8); g.restore(); });
+    g.beginPath(); g.arc(0,0,30,0,7); g.fillStyle=ink; g.fill(); g.restore(); }
+  $('#spin').onclick=()=>{ if(spinning) return; spinning=true; $('#wRes').textContent=''; $('#wDesc').textContent='';
+    const s=ang, delta=Math.PI*2*(5+Math.random()*3), t0=performance.now(), D=reduce?10:4200; let lastSeg=-1;
+    const tick=now=>{ const t=Math.min(1,(now-t0)/D), e=1-Math.pow(1-t,4); ang=s+delta*e; draw();
+      const sg=Math.floor(ang/(Math.PI/4)); if(sg!==lastSeg){ lastSeg=sg; sfx(300,.02,'square',.03); }
+      if(t<1) return requestAnimationFrame(tick); spinning=false; const seg=Math.PI*2/DATES.length, a=((-Math.PI/2-ang)%(Math.PI*2)+Math.PI*2)%(Math.PI*2), k=Math.floor(a/seg);
+      $('#wRes').textContent=DATES[k]; $('#wDesc').textContent=DATE_DESC[k]; $('#spin').textContent='Spin again'; win(); };
+    requestAnimationFrame(tick); };
+  draw(); }
+
+// ---------- boot ----------
+window.__gn = { state:()=>S, key:makeKey };
+(function boot(){ const t=store.get('theme',null);
+  applyTheme(t||'moon');
+  D = decodeD(store.get('design',null)); if(D) MODE=D.sit==='ld'?'two':'one';
+  if(!store.get('unlocked',false)) return vLock();
+  afterUnlock(); })();
+</script>
+
+</body>
+</html>
