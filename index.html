@@ -159,6 +159,9 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid var(-
 .album figure{margin:0;aspect-ratio:3/4;border-radius:14px;overflow:hidden;background:var(--tile)}
 .album figure:first-child{grid-column:span 2;aspect-ratio:4/3}
 .album img{width:100%;height:100%;object-fit:cover;display:block}
+.addph{display:grid;gap:8px;padding:14px;border-radius:14px;background:var(--tile);text-align:center}
+.addph input{display:none}
+.addph label.btn{cursor:pointer}
 .toast{position:fixed;left:50%;bottom:calc(18px + env(safe-area-inset-bottom,0px));transform:translate(-50%,140%);z-index:30;background:var(--paper);color:var(--ink);
   border:1px solid var(--line);padding:10px 18px;border-radius:999px;font-weight:800;box-shadow:0 10px 30px rgba(0,0,0,.25);transition:transform .45s cubic-bezier(.3,1.4,.5,1);white-space:nowrap}
 .toast.show{transform:translate(-50%,0)}
@@ -279,6 +282,24 @@ const SECRET = CONFIG.her+'|'+CONFIG.him+'|'+CONFIG.lock;
 const NS = 'gn2_'+cyrb53(SECRET).toString(36)+'_';
 const store = { get(k,d){ try{ const v=localStorage.getItem(NS+k); return v==null?d:JSON.parse(v); }catch(e){ return d; } },
                 set(k,v){ try{ localStorage.setItem(NS+k,JSON.stringify(v)); }catch(e){} } };
+// Players can add their own photos on this phone (saved only on this phone).
+const DEF_PHOTO = CONFIG.photo, DEF_ALBUM = CONFIG.album.slice();
+function applyMyPhotos(){ const m=store.get('myPhotos',null);
+  if(m&&m.album&&m.album.length){ CONFIG.album=m.album; CONFIG.photo=m.puzzle||DEF_PHOTO; } else { CONFIG.album=DEF_ALBUM.slice(); CONFIG.photo=DEF_PHOTO; } }
+applyMyPhotos();
+function shrink(file, max, square){ return new Promise((res,rej)=>{ const u=URL.createObjectURL(file), im=new Image();
+  im.onload=()=>{ let sx=0,sy=0,sw=im.naturalWidth,sh=im.naturalHeight;
+    if(square){ const m=Math.min(sw,sh); sx=(sw-m)/2; sy=(sh-m)/2; sw=sh=m; }
+    const k=Math.min(1,max/Math.max(sw,sh)), c=document.createElement('canvas'); c.width=Math.round(sw*k); c.height=Math.round(sh*k);
+    c.getContext('2d').drawImage(im,sx,sy,sw,sh,0,0,c.width,c.height); URL.revokeObjectURL(u); res(c.toDataURL('image/jpeg',.8)); };
+  im.onerror=()=>{ URL.revokeObjectURL(u); rej(); }; im.src=u; }); }
+async function addMyPhotos(files){ files=[...files].filter(f=>/^image\//.test(f.type)).slice(0,6); if(!files.length) return false;
+  const album=[]; for(const f of files){ try{ album.push(await shrink(f,900,false)); }catch(e){} }
+  if(!album.length){ toast("Couldn't read those photos. Try JPG or PNG."); return false; }
+  let puzzle=null; try{ puzzle=await shrink(files[0],600,true); }catch(e){}
+  try{ localStorage.setItem(NS+'myPhotos',JSON.stringify({album,puzzle})); }
+  catch(e){ toast('Too many big photos. Try fewer.'); return false; }
+  applyMyPhotos(); return true; }
 const nm = r => CONFIG[r];
 const other = r => r==='her'?'him':'her';
 const starterOf = L => L%2 ? 'her' : 'him';
@@ -524,10 +545,16 @@ function onKey(code){ const O=other(ME), L=S.lvl, err=$('#keyErr');
   if(p!=null){ S.skip=p; save(); return vReveal(); }
   err.textContent = `That key doesn't open Level ${L}. Check you typed the newest key ${nm(O)} sent.`; sfx(160,.25,'sawtooth',.05); }
 
-function vPhotos(){ chrome(true);
+function vPhotos(){ chrome(true); const mine=!!store.get('myPhotos',null);
   show(`<section class="card"><span class="eyebrow">Our photos</span><h2>A few favourites of you two</h2>
     <div class="album">${CONFIG.album.map(s=>`<figure><img src="${esc(s)}" alt="Photo of ${esc(nm('her'))} and ${esc(nm('him'))}" loading="lazy"></figure>`).join('')}</div>
-    <button class="btn alt" id="back">Back to the game</button></section>`); $('#back').onclick=vHome; }
+    <div class="addph"><b>📷 ${mine?'Change your photos':'Add your own photos'}</b>
+      <p class="muted small">Pick up to 6 from your phone. The first one becomes your puzzle picture. They stay on this phone only.</p>
+      <label class="btn" for="phIn">Choose photos</label><input type="file" id="phIn" accept="image/*" multiple>
+      ${mine?'<button class="link" id="phReset">Go back to the original photos</button>':''}</div>
+    <button class="btn alt" id="back">Back to the game</button></section>`); $('#back').onclick=vHome;
+  $('#phIn').onchange=async e=>{ const b=$('label[for="phIn"]'); b.textContent='Adding…'; if(await addMyPhotos(e.target.files)){ win(); toast('Photos added 💞'); vPhotos(); } else b.textContent='Choose photos'; };
+  if($('#phReset')) $('#phReset').onclick=()=>{ store.set('myPhotos',null); applyMyPhotos(); vPhotos(); }; }
 
 // ---------- game host ----------
 function vGame(player){ chrome(true); const L=S.lvl, gid=gameOf(L), g=GAMES[gid], t=tierOf(L);

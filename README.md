@@ -4,6 +4,10 @@ A personalised two-player game gift for couples. Single page, no server, runs on
 
 This is the clean starting file. It has demo names (Mira & Sam), placeholder photos and an original demo tune. No real customer's details are in it.
 
+## Players can add their own photos
+
+On the game's "Our photos" page, players tap **Choose photos** and pick up to 6 from their phone. The first one becomes the puzzle picture. Photos stay on that phone only.
+
 ## Making one for a customer
 
 1. Copy this repo's files into the customer's new repo.
