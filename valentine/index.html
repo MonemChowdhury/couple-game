@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A Gift For You</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600;700&family=Fredoka:wght@500;600&family=Nunito:wght@400;600;700;800&display=swap">
+<style>
+/* VOICE tender, playful · IDEA a week of little envelopes, one opened each day · PICTURE the calendar of 8 day-cards
+   COLOUR each day brings its own two-tone ground; cards stay warm white · TYPE Dancing Script names, Fredoka titles, Nunito body
+   LAYOUT one column, one main action per screen */
+:root{--c1:#5b0f2e;--c2:#d6336c;--acc:#e0245e;--ink:#3a0d1f;--muted:#8a5468;--card:#fffafb;--tile:#fdeef3;--line:#f5d3df;
+  --script:"Dancing Script",cursive;--disp:"Fredoka","Nunito",system-ui,sans-serif;--body:"Nunito",system-ui,-apple-system,sans-serif;color-scheme:light}
+*{box-sizing:border-box;min-width:0}
+[hidden]{display:none!important}
+html,body{min-height:100%}
+body{margin:0;font:16px/1.55 var(--body);color:var(--ink);background:linear-gradient(160deg,var(--c1),var(--c2)) fixed;
+  padding:0 max(16px,env(safe-area-inset-left)) 0 max(16px,env(safe-area-inset-right));overflow-x:clip;-webkit-tap-highlight-color:transparent;transition:background .6s}
+#fx,#bg{position:fixed;inset:0;width:100%;height:100%;pointer-events:none}#bg{z-index:0}#fx{z-index:50}
+.wrap{position:relative;z-index:1;max-width:460px;margin:0 auto;padding:14px 0 30px;display:flex;flex-direction:column;gap:14px}
+.top{display:flex;justify-content:space-between;align-items:center}
+.chip{background:rgba(255,255,255,.18);color:#fff;border:1px solid rgba(255,255,255,.35);border-radius:999px;padding:8px 14px;font:700 14px var(--body);cursor:pointer;min-height:40px;backdrop-filter:blur(6px)}
+.card{background:var(--card);border-radius:26px;padding:22px 18px;display:flex;flex-direction:column;gap:14px;box-shadow:0 18px 40px rgba(40,0,20,.28);animation:rise .45s ease}
+@keyframes rise{from{transform:translateY(10px);opacity:.3}to{transform:none;opacity:1}}
+h1,h2,h3{margin:0;font-family:var(--disp);line-height:1.12;text-wrap:balance}
+h2{font-size:26px}h3{font-size:19px}p{margin:0}
+.script{font-family:var(--script);font-weight:700}
+.hero{text-align:center;color:#fff;padding:22px 6px 6px}
+.hero .eyebrow{font-weight:800;font-size:13px;letter-spacing:.04em;opacity:.9}
+.hero h1{font-family:var(--script);font-size:clamp(48px,15vw,64px);font-weight:700;line-height:1;margin:6px 0}
+.hero p{opacity:.92;font-weight:600}
+.muted{color:var(--muted)}.small{font-size:14px}.center{text-align:center}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:54px;padding:12px 20px;border:none;border-radius:18px;cursor:pointer;
+  font:600 19px var(--disp);background:var(--acc);color:#fff;text-decoration:none;box-shadow:0 4px 0 color-mix(in srgb,var(--acc) 60%,#000);width:100%}
+.btn:active{transform:translateY(3px);box-shadow:0 1px 0 color-mix(in srgb,var(--acc) 60%,#000)}
+.btn.soft{background:var(--tile);color:var(--ink);box-shadow:0 4px 0 var(--line)}
+.btn.wa{background:#25D366;color:#053d20;box-shadow:0 4px 0 #128C7E}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+button:focus-visible,a:focus-visible{outline:3px solid #ffd166;outline-offset:2px}
+/* lock */
+.dots{display:flex;justify-content:center;gap:12px}.dots i{width:16px;height:16px;border-radius:50%;border:2px solid var(--acc)}.dots i.f{background:var(--acc)}
+.dots.bad{animation:shake .4s}@keyframes shake{25%{transform:translateX(-8px)}50%{transform:translateX(8px)}75%{transform:translateX(-4px)}}
+.pad{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;max-width:280px;width:100%;margin:0 auto}
+.pad button{font:700 24px var(--disp);border:2px solid var(--line);background:var(--tile);color:var(--ink);border-radius:18px;min-height:58px;cursor:pointer}
+/* calendar */
+.count{text-align:center}.count b{display:block;font:600 clamp(40px,13vw,56px) var(--disp);color:var(--acc);font-variant-numeric:tabular-nums;line-height:1.1}
+.cal{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.day{position:relative;display:flex;flex-direction:column;align-items:center;gap:2px;padding:16px 8px 14px;border-radius:20px;border:2px solid var(--line);background:var(--tile);color:var(--ink);cursor:pointer;font:600 17px var(--disp)}
+.day b{font-size:40px;line-height:1.15}.day small{font:700 12px var(--body);color:var(--muted)}
+.day.lock{opacity:.6;filter:grayscale(.6)}.day.lock b{font-size:34px}
+.day.new{border-color:var(--acc);background:color-mix(in srgb,var(--acc) 12%,#fff);animation:glow 1.8s ease-in-out infinite}
+@keyframes glow{50%{box-shadow:0 0 0 6px color-mix(in srgb,var(--acc) 22%,transparent)}}
+.day .tag{position:absolute;top:8px;right:8px;font:800 11px var(--body);background:var(--acc);color:#fff;border-radius:999px;padding:2px 8px}
+.day.done .tag{background:#2a9d6f}
+.extras{display:grid;gap:10px}
+/* day screens */
+.dhead{display:flex;align-items:center;gap:12px}.dhead b{font-size:44px;line-height:1}
+.eyebrow2{font:800 12px var(--body);letter-spacing:.06em;text-transform:uppercase;color:var(--acc)}
+.stage{min-height:300px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center;position:relative}
+.bud{font-size:110px;line-height:1;border:none;background:none;cursor:pointer;transition:transform .2s;padding:10px}
+.bud:active{transform:scale(.92)}
+.meter{width:100%;height:12px;border-radius:6px;background:var(--line);overflow:hidden}.meter i{display:block;height:100%;width:0;background:var(--acc);transition:width .2s}
+.ask{font:600 26px var(--disp)}
+.dodge{position:relative;width:100%;height:150px}
+.dodge .btn{position:absolute;width:auto;transition:left .25s,top .25s,transform .25s}
+.choco{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;width:100%}
+.choco button{aspect-ratio:1;border:none;border-radius:50%;cursor:pointer;font-size:38px;background:radial-gradient(circle at 35% 30%,#8b5a3c,#4a2512);box-shadow:inset 0 -6px 0 rgba(0,0,0,.25),0 4px 10px rgba(0,0,0,.2);color:#fff}
+.choco button.open{background:var(--tile);box-shadow:none;font:600 13px/1.3 var(--body);color:var(--ink);padding:8px;border-radius:18px;aspect-ratio:auto;min-height:110px;animation:rise .4s}
+.pz{display:grid;gap:3px;width:100%;max-width:330px;aspect-ratio:1;background:var(--line);padding:3px;border-radius:16px}
+.tile{border:none;border-radius:8px;padding:0;cursor:pointer;background-color:var(--tile);position:relative}
+.tile.blank{background:transparent;cursor:default}.pz.solved{gap:0;padding:0}.pz.solved .tile{border-radius:0}
+.tile span{position:absolute;top:3px;left:6px;font:800 11px var(--body);color:#fff;text-shadow:0 1px 2px #000a}
+.prom{width:100%;display:flex;flex-direction:column;gap:10px}
+.prom button{display:flex;gap:10px;align-items:center;text-align:left;border:2px dashed var(--line);background:var(--tile);border-radius:16px;padding:14px;font:700 16px var(--body);color:var(--ink);cursor:pointer;position:relative;overflow:hidden;touch-action:none;user-select:none}
+.prom button i{position:absolute;inset:0;width:0;background:color-mix(in srgb,var(--acc) 22%,transparent);transition:width .1s linear}
+.prom button span{position:relative}.prom button.ok{border-style:solid;border-color:var(--acc)}
+.hugbtn{width:190px;height:190px;border-radius:50%;border:none;cursor:pointer;font-size:84px;position:relative;touch-action:none;user-select:none;-webkit-user-select:none;
+  background:conic-gradient(var(--acc) calc(var(--p,0)*1%),var(--tile) 0);box-shadow:0 10px 30px rgba(0,0,0,.15)}
+.hugbtn::after{content:"";position:absolute;inset:14px;border-radius:50%;background:var(--card)}
+.hugbtn span{position:relative;z-index:1;display:block;transition:transform .2s}.hugbtn.on span{transform:scale(1.15)}
+.field{position:relative;width:100%;height:340px;border-radius:20px;background:var(--tile);overflow:hidden;touch-action:manipulation;user-select:none}
+.k{position:absolute;font-size:40px;border:none;background:none;padding:4px;cursor:pointer;line-height:1}.k.pop{animation:pop .25s forwards}@keyframes pop{to{transform:scale(1.9);opacity:0}}
+.over{position:absolute;inset:0;display:grid;place-items:center;padding:16px;background:color-mix(in srgb,var(--tile) 80%,transparent)}
+.hud{display:flex;justify-content:space-between;width:100%;font:800 15px var(--body)}
+.qq{font:600 22px var(--disp);text-wrap:balance}
+.opts{display:grid;gap:10px;width:100%}
+.opts button{border:2px solid var(--line);background:var(--tile);border-radius:16px;padding:14px;font:700 17px var(--body);color:var(--ink);cursor:pointer;text-align:left}
+.opts button.right{border-color:#2a9d6f;background:#e3f6ec}.opts button.wrong{border-color:#d1495b;background:#fde6e9}
+/* reveal + letter */
+.photo{width:100%;aspect-ratio:4/5;border-radius:20px;overflow:hidden;background:var(--tile);transform:rotate(-1.5deg);box-shadow:0 10px 24px rgba(0,0,0,.18);border:8px solid #fff}
+.photo img{width:100%;height:100%;object-fit:cover;display:block}
+.note{font:700 clamp(24px,7vw,30px)/1.35 var(--script);text-align:center;color:var(--ink);text-wrap:pretty}
+.letter{font:600 17px/1.75 var(--body);white-space:pre-line}
+.sign{font:700 30px var(--script);text-align:right;color:var(--acc)}
+.album{display:grid;grid-template-columns:1fr 1fr;gap:8px}.album figure{margin:0;aspect-ratio:3/4;border-radius:14px;overflow:hidden;background:var(--tile)}
+.album figure:first-child{grid-column:span 2;aspect-ratio:4/3}.album img{width:100%;height:100%;object-fit:cover;display:block}
+.ow{display:grid;gap:10px}.ow details{background:var(--tile);border-radius:16px;padding:4px 14px;border:2px solid var(--line)}
+.ow summary{cursor:pointer;font:600 18px var(--disp);padding:12px 0;list-style:none}.ow summary::-webkit-details-marker{display:none}
+.ow details[open]{border-color:var(--acc)}.ow details p{padding:0 0 14px;font-weight:600;white-space:pre-line}
+.toast{position:fixed;left:50%;bottom:calc(18px + env(safe-area-inset-bottom));transform:translate(-50%,160%);z-index:60;background:#fff;color:var(--ink);padding:11px 18px;border-radius:999px;font-weight:800;box-shadow:0 10px 30px rgba(0,0,0,.3);transition:transform .4s cubic-bezier(.3,1.4,.5,1);max-width:92vw;text-align:center}
+.toast.show{transform:translate(-50%,0)}
+.credit{color:#fff;opacity:.85;text-align:center;font-size:13px}.credit b{user-select:all}
+.link{background:none;border:none;color:var(--muted);font:700 15px var(--body);text-decoration:underline;cursor:pointer;padding:8px}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<canvas id="bg" aria-hidden="true"></canvas><canvas id="fx" aria-hidden="true"></canvas>
+<div class="wrap">
+  <div class="top" id="top" hidden><button class="chip" id="homeBtn">📅 All days</button><button class="chip" id="snd" aria-label="Music">♪</button></div>
+  <main id="view"></main>
+  <p class="credit">Made with love by Monem · want one for your someone? <b>info@monemshariar.com</b></p>
+</div>
+<div class="toast" id="toast" role="status"></div>
+<script>
+// ================= Edit these for each gift =================
+const CONFIG = {
+  to: "Mira",                       // who receives the gift
+  from: "Sam",                      // who sends it
+  lock: "1402", lockHint: "Enter the day we first met: day then month (DDMM).",
+  mode: "week",                     // "week" = one surprise a day from `start`; "all" = everything open now (birthday, anniversary)
+  start: "2027-02-07",              // first day (Rose Day) in the receiver's time zone
+  tz: "America/Toronto",            // receiver's time zone
+  replyTo: "",                      // sender's WhatsApp number, e.g. "8801712345678" (optional)
+  music: "media/music.mp3",         // "" for no music
+  puzzle: "media/puzzle.jpg",
+  photos: ["media/w1.jpg","media/w2.jpg","media/w3.jpg","media/w4.jpg","media/w5.jpg"],
+  days: [  // one message (and optional photo) for each day, written by the sender
+    {msg:"A rose for every time you made an ordinary day feel special. This one is just the first.", photo:"media/w1.jpg"},
+    {msg:"I'd ask you a thousand times, and I'd hope for the same answer every time.", photo:"media/w2.jpg"},
+    {msg:"Sweet things for the sweetest person I know.", photo:""},
+    {msg:"Every piece of us fits. Even the messy ones.", photo:"media/puzzle.jpg"},
+    {msg:"I don't make many promises. These ones I'll keep.", photo:"media/w3.jpg"},
+    {msg:"Until I can hug you for real, this one will have to do. Hold on to it.", photo:"media/w4.jpg"},
+    {msg:"You caught them all. You always do.", photo:""},
+    {msg:"Happy Valentine's Day. You're my favourite person, today and every day.", photo:"media/w5.jpg"}
+  ],
+  chocolates: ["The way you laugh at your own jokes.","How you always know when I'm tired.","Your terrible singing in the car.","The first time you held my hand.","How you make everyone feel welcome.","That you still choose me, every day."],
+  promises: ["I'll always save you the last bite.","I'll listen, even when I'm sleepy.","I'll make you laugh on your worst days.","I'll keep choosing you."],
+  quiz: [
+    {q:"Where did we go on our first date?", a:["A coffee shop","The cinema","A park walk","A bookshop"], ok:0},
+    {q:"What's my favourite food?", a:["Biryani","Pizza","Sushi","Pasta"], ok:0},
+    {q:"What did I say the first time I saw you?", a:["Nothing, I was too nervous","Hi!","Nice shoes","Is this seat taken?"], ok:0},
+    {q:"What's our song?", a:["The one from our first road trip","A wedding song","Happy Birthday","I don't have one"], ok:0},
+    {q:"What do I love most about you?", a:["Everything. Trick question.","Your cooking","Your phone","Your shoes"], ok:0}
+  ],
+  letter: "My love,\n\nThis week was my little way of saying what I don't say often enough.\n\nThank you for every early morning, every late night, and every small thing you do without being asked. You make my life softer and louder and better.\n\nWhatever comes next, I want to face it with you.",
+  openWhen: [
+    {when:"you miss me", text:"Close your eyes and count to ten. I'm thinking about you right now. I promise."},
+    {when:"you can't sleep", text:"Put on our song, breathe slowly, and imagine me telling you a terrible joke."},
+    {when:"you had a bad day", text:"Bad days end. You're stronger than you think, and I'm proud of you. Call me."},
+    {when:"you need a laugh", text:"Remember the time we got lost and blamed the map? Still your fault."}
+  ]
+};
+// ============================================================
+const DAYS = [
+ {name:"Rose Day",e:"🌹",c:["#5b0f2e","#d6336c"],acc:"#e0245e",how:"Tap the bud to make it bloom."},
+ {name:"Propose Day",e:"💍",c:["#3b1d5e","#b5559e"],acc:"#b5367f",how:"I have a question for you…"},
+ {name:"Chocolate Day",e:"🍫",c:["#3a1d10","#a0612f"],acc:"#9a4a1f",how:"Each chocolate hides a little secret. Open them all."},
+ {name:"Teddy Day",e:"🧸",c:["#6b3a12","#e0a458"],acc:"#c06c1e",how:"Put our picture back together."},
+ {name:"Promise Day",e:"🤞",c:["#2b2a6b","#7d7ad8"],acc:"#5c58c9",how:"Press and hold each promise to seal it."},
+ {name:"Hug Day",e:"🤗",c:["#7a2e2a","#f08a6c"],acc:"#d9534f",how:"Press and hold the heart. Don't let go until it's full."},
+ {name:"Kiss Day",e:"💋",c:["#6a0d3a","#f05d9a"],acc:"#e0247a",how:"Catch as many kisses as you can in 20 seconds."},
+ {name:"Valentine's Day",e:"💝",c:["#4a0418","#c1121f"],acc:"#c1121f",how:"How well do you know me?"}
+];
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)], V=$('#view');
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const hash=s=>{let h=5381;for(const c of s)h=(h*33)^c.charCodeAt(0);return (h>>>0).toString(36)};
+const NS='lg_'+hash(CONFIG.to+CONFIG.from+CONFIG.lock+CONFIG.start)+'_';
+const store={get(k,d){try{const v=localStorage.getItem(NS+k);return v==null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem(NS+k,JSON.stringify(v))}catch(e){}}};
+const PREVIEW=location.hash==='#preview';
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+let done=store.get('done',[]);
+
+// ---------- dates (in the receiver's time zone) ----------
+function today(){ try{ return new Intl.DateTimeFormat('en-CA',{timeZone:CONFIG.tz,year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date()); }catch(e){ return new Date().toISOString().slice(0,10); } }
+const addDays=(s,n)=>{ const d=new Date(s+'T12:00:00Z'); d.setUTCDate(d.getUTCDate()+n); return d.toISOString().slice(0,10); };
+const between=(a,b)=>Math.round((Date.parse(b+'T12:00:00Z')-Date.parse(a+'T12:00:00Z'))/864e5);
+const pretty=s=>new Date(s+'T12:00:00Z').toLocaleDateString('en-US',{month:'short',day:'numeric',timeZone:'UTC'});
+const isOpen=i=>CONFIG.mode==='all'||PREVIEW||today()>=addDays(CONFIG.start,i);
+function toMidnight(){ try{ const p=Object.fromEntries(new Intl.DateTimeFormat('en-GB',{timeZone:CONFIG.tz,hour:'2-digit',minute:'2-digit',second:'2-digit',hourCycle:'h23'}).formatToParts(new Date()).map(x=>[x.type,+x.value]));
+  return 86400-(p.hour*3600+p.minute*60+p.second); }catch(e){ return 0; } }
+function opensIn(i){ const d=between(today(),addDays(CONFIG.start,i)); if(d<=0) return 'Open now';
+  if(d===1){ const s=toMidnight(); return `Opens in ${Math.floor(s/3600)}h ${Math.floor(s%3600/60)}m`; } return `Opens in ${d} days`; }
+
+// ---------- sound, confetti, background ----------
+let AC=null, soundOn=store.get('sound',true);
+function sfx(f=660,d=.1,type='triangle',v=.07){ if(!soundOn) return; try{ AC=AC||new (window.AudioContext||window.webkitAudioContext)();
+  const o=AC.createOscillator(),g=AC.createGain(); o.type=type; o.frequency.value=f; g.gain.setValueAtTime(v,AC.currentTime); g.gain.exponentialRampToValueAtTime(.0001,AC.currentTime+d);
+  o.connect(g).connect(AC.destination); o.start(); o.stop(AC.currentTime+d); }catch(e){} }
+const bgm=CONFIG.music?new Audio(CONFIG.music):null; if(bgm){ bgm.loop=true; bgm.volume=.4; }
+const play=()=>{ if(bgm&&soundOn){ const p=bgm.play(); if(p&&p.catch) p.catch(()=>{}); } };
+document.addEventListener('pointerdown',play,{once:true});
+document.addEventListener('visibilitychange',()=>{ if(!bgm) return; document.hidden?bgm.pause():(soundOn&&bgm.currentTime>0&&play()); });
+$('#snd').onclick=()=>{ soundOn=!soundOn; store.set('sound',soundOn); $('#snd').textContent=soundOn?'♪':'×'; soundOn?play():bgm&&bgm.pause(); };
+$('#snd').textContent=soundOn?'♪':'×'; if(!bgm) $('#snd').hidden=true;
+const fx=$('#fx'), fc=fx.getContext('2d'); let parts=[], raf=0;
+function confetti(n=140){ if(reduce) return; fx.width=innerWidth; fx.height=innerHeight; const cols=['#ff4d6d','#ffd166','#ffffff','#f72585','#ff8fab'];
+  for(let i=0;i<n;i++) parts.push({x:innerWidth/2,y:innerHeight*.35,vx:(Math.random()-.5)*14,vy:-Math.random()*13-3,r:Math.random()*6+3,c:cols[i%5],a:Math.random()*6,h:Math.random()<.3});
+  if(!raf) loop(); }
+function loop(){ fc.clearRect(0,0,fx.width,fx.height); parts=parts.filter(p=>p.y<innerHeight+30);
+  parts.forEach(p=>{ p.vy+=.32; p.x+=p.vx; p.y+=p.vy; p.a+=.1; fc.save(); fc.translate(p.x,p.y); fc.rotate(p.a); fc.fillStyle=p.c;
+    if(p.h){ fc.font=(p.r*3)+'px serif'; fc.fillText('❤',0,0); } else fc.fillRect(-p.r/2,-p.r/2,p.r,p.r*1.6); fc.restore(); });
+  raf=parts.length?requestAnimationFrame(loop):0; }
+const win=()=>{ [523,659,784,1047].forEach((f,i)=>setTimeout(()=>sfx(f,.16),i*110)); confetti(); };
+const bg=$('#bg'), bc=bg.getContext('2d'); let fl=[], braf=0, bgE='❤';
+function startBg(){ cancelAnimationFrame(braf); bg.width=innerWidth; bg.height=innerHeight;
+  fl=Array.from({length:14},()=>({x:Math.random()*innerWidth,y:Math.random()*innerHeight,s:14+Math.random()*20,v:.2+Math.random()*.45,w:Math.random()*6}));
+  if(reduce) return drawBg(); (function f(){ drawBg(); fl.forEach(p=>{ p.y-=p.v; p.w+=.01; if(p.y<-30){ p.y=innerHeight+20; p.x=Math.random()*innerWidth; } }); braf=requestAnimationFrame(f); })(); }
+function drawBg(){ bc.clearRect(0,0,bg.width,bg.height); bc.globalAlpha=.35; fl.forEach(p=>{ bc.font=p.s+'px serif'; bc.fillText(bgE,p.x+Math.sin(p.w)*12,p.y); }); bc.globalAlpha=1; }
+addEventListener('resize',startBg);
+function theme(i){ const d=DAYS[i]||{c:["#5b0f2e","#d6336c"],acc:"#e0245e",e:'❤'}, r=document.documentElement.style;
+  r.setProperty('--c1',d.c[0]); r.setProperty('--c2',d.c[1]); r.setProperty('--acc',d.acc); bgE=i==null?'❤':d.e; startBg(); }
+let tT=0; function toast(m){ const t=$('#toast'); t.textContent=m; t.classList.add('show'); clearTimeout(tT); tT=setTimeout(()=>t.classList.remove('show'),2600); }
+function show(html, top=true){ V.innerHTML=html; $('#top').hidden=!top; scrollTo({top:0,behavior:reduce?'auto':'smooth'}); }
+$('#homeBtn').onclick=()=>vHome();
+const waLink=t=>(CONFIG.replyTo?`https://wa.me/${CONFIG.replyTo}?text=`:'https://wa.me/?text=')+encodeURIComponent(t);
+let tick=0; function every(fn){ clearInterval(tick); fn(); tick=setInterval(fn,1000); }
+const onLeave=(el,fn)=>{ const o=new MutationObserver(()=>{ if(!document.body.contains(el)){ fn(); o.disconnect(); } }); o.observe(V,{childList:true}); };
+
+// ---------- screens ----------
+function vLock(){ theme(null); let typed='';
+  show(`<div class="hero"><p class="eyebrow">A gift is waiting for you</p><h1>${esc(CONFIG.to)}</h1><p>from ${esc(CONFIG.from)}, with love</p></div>
+  <section class="card"><p class="center muted">${esc(CONFIG.lockHint)}</p><div class="dots" id="dots"></div><div class="pad" id="pad"></div></section>`,false);
+  const dots=$('#dots'), draw=()=>dots.innerHTML=[...CONFIG.lock].map((_,i)=>`<i class="${i<typed.length?'f':''}"></i>`).join('');
+  ['1','2','3','4','5','6','7','8','9','⌫','0','✓'].forEach(k=>{ const b=document.createElement('button'); b.textContent=k; b.setAttribute('aria-label',k==='⌫'?'Delete':k==='✓'?'Unlock':k);
+    b.onclick=()=>{ if(k==='⌫') typed=typed.slice(0,-1); else if(k!=='✓'&&typed.length<CONFIG.lock.length) typed+=k; sfx(520,.05); draw();
+      if(typed.length===CONFIG.lock.length){ if(typed===CONFIG.lock){ store.set('in',true); win(); setTimeout(vHome,600); }
+        else { dots.classList.add('bad'); sfx(170,.25,'sawtooth',.05); setTimeout(()=>{ dots.classList.remove('bad'); typed=''; draw(); },450); } } };
+    $('#pad').appendChild(b); }); draw(); }
+
+function vHome(){ theme(null); const week=CONFIG.mode==='week'&&!PREVIEW, first=addDays(CONFIG.start,0), before=week&&today()<first, all8=done.includes(7);
+  const tiles=DAYS.map((d,i)=>{ const open=isOpen(i), fin=done.includes(i), dt=addDays(CONFIG.start,i);
+    return `<button class="day ${open?(fin?'done':'new'):'lock'}" data-i="${i}">${open?(fin?'<span class="tag">✓</span>':'<span class="tag">New</span>'):''}
+      <b>${open?d.e:'🔒'}</b>${d.name}<small>${week?pretty(dt):'Surprise '+(i+1)}</small><small class="oi" data-i="${i}">${open?(fin?'Opened':'Tap to open'):''}</small></button>`; }).join('');
+  show(`<div class="hero"><p class="eyebrow">${CONFIG.mode==='week'?"A Valentine's Week gift":'A gift with 8 surprises'}</p><h1>${esc(CONFIG.to)}</h1><p>with love from ${esc(CONFIG.from)}</p></div>
+    ${before?`<section class="card count"><p class="muted">Your first surprise opens on ${pretty(first)}</p><b id="cd">…</b><p class="small muted">Come back then. It's worth the wait 💌</p></section>`:''}
+    <section class="card"><h3>${week?'A new surprise opens every day at midnight':'Open your surprises in order'}</h3><div class="cal">${tiles}</div></section>
+    <section class="card extras"><button class="btn soft" id="ph">📸 Our photos</button>
+      ${all8?'<button class="btn soft" id="lt">💌 Read my letter again</button>':''}
+      ${all8&&CONFIG.openWhen.length?'<button class="btn" id="ow">✉️ Open when… letters</button>':CONFIG.openWhen.length?'<p class="small muted center">✉️ Some secret letters unlock after the last day.</p>':''}</section>`);
+  $$('.day').forEach(b=>b.onclick=()=>{ const i=+b.dataset.i; if(!isOpen(i)) return toast(`${DAYS[i].e} ${DAYS[i].name}: ${opensIn(i)}`);
+    const prev=DAYS.findIndex((_,k)=>k<i&&isOpen(k)&&!done.includes(k)); if(CONFIG.mode==='all'&&prev>-1) return toast(`Open ${DAYS[prev].name} first 💝`); vDay(i); });
+  $('#ph').onclick=vPhotos; if($('#lt')) $('#lt').onclick=vLetter; if($('#ow')) $('#ow').onclick=vOpenWhen;
+  every(()=>{ if($('#cd')){ const d=between(today(),first); if(d>1) $('#cd').textContent=d+' days'; else { const s=toMidnight(); $('#cd').textContent=`${Math.floor(s/3600)}h ${String(Math.floor(s%3600/60)).padStart(2,'0')}m ${String(s%60).padStart(2,'0')}s`; } if(today()>=first) vHome(); }
+    $$('.oi').forEach(e=>{ const i=+e.dataset.i; if(!isOpen(i)) e.textContent=opensIn(i).replace('Opens ',''); }); }); }
+
+function vDay(i){ clearInterval(tick); theme(i); const d=DAYS[i];
+  show(`<section class="card"><div class="dhead"><b>${d.e}</b><div><span class="eyebrow2">Day ${i+1}${CONFIG.mode==='week'?' · '+pretty(addDays(CONFIG.start,i)):''}</span><h2>${d.name}</h2></div></div>
+    <p class="muted">${esc(d.how)}</p><div class="stage" id="st"></div></section>`);
+  [gRose,gPropose,gChoco,gPuzzle,gPromise,gHug,gKiss,gQuiz][i]($('#st'), ()=>{ if(!done.includes(i)){ done.push(i); store.set('done',done); } setTimeout(()=>vReveal(i),900); }); }
+
+function vReveal(i){ theme(i); const d=DAYS[i], m=CONFIG.days[i]||{}, last=i===7;
+  show(`<section class="card"><span class="eyebrow2 center">${d.e} ${d.name}</span>
+    ${m.photo?`<div class="photo"><img src="${esc(m.photo)}" alt="A photo of ${esc(CONFIG.to)} and ${esc(CONFIG.from)}"></div>`:`<p class="center" style="font-size:80px;line-height:1">${d.e}</p>`}
+    <p class="note">${esc(m.msg||'')}</p><p class="sign">— ${esc(CONFIG.from)}</p>
+    ${last?'<button class="btn" id="lt">💌 Open my letter</button>':''}
+    <a class="btn wa" target="_blank" rel="noopener" href="${waLink(`${d.e} I opened ${d.name}! `)}">💬 Reply to ${esc(CONFIG.from)}</a>
+    <button class="btn soft" id="bk">📅 Back to all days</button>
+    ${!last&&CONFIG.mode==='week'&&!PREVIEW?`<p class="small muted center">Next surprise: ${DAYS[i+1].e} ${DAYS[i+1].name}, ${opensIn(i+1).toLowerCase()}.</p>`:''}</section>`);
+  win(); $('#bk').onclick=vHome; if($('#lt')) $('#lt').onclick=vLetter; }
+
+function vLetter(){ theme(7);
+  show(`<section class="card"><span class="eyebrow2">A letter for you</span><p class="letter">${esc(CONFIG.letter)}</p><p class="sign">Forever yours,<br>${esc(CONFIG.from)}</p>
+    ${CONFIG.openWhen.length?'<button class="btn" id="ow">✉️ Open when… letters</button>':''}<button class="btn soft" id="ph">📸 Our photos</button>
+    <a class="btn wa" target="_blank" rel="noopener" href="${waLink('💝 I read your letter. ')}">💬 Reply to ${esc(CONFIG.from)}</a></section>`);
+  confetti(200); if($('#ow')) $('#ow').onclick=vOpenWhen; $('#ph').onclick=vPhotos; }
+function vOpenWhen(){ theme(7);
+  show(`<section class="card"><span class="eyebrow2">Keep these for later</span><h2>Open when…</h2><p class="muted small">Only open one when you really need it.</p>
+    <div class="ow">${CONFIG.openWhen.map(o=>`<details><summary>✉️ Open when ${esc(o.when)}</summary><p>${esc(o.text)}</p></details>`).join('')}</div>
+    <button class="btn soft" id="bk">📅 Back to all days</button></section>`);
+  $$('.ow details').forEach(d=>d.ontoggle=()=>{ if(d.open) sfx(880,.12); }); $('#bk').onclick=vHome; }
+function vPhotos(){ show(`<section class="card"><span class="eyebrow2">Our photos</span><h2>A few favourites</h2>
+  <div class="album">${CONFIG.photos.map(s=>`<figure><img src="${esc(s)}" alt="A photo of ${esc(CONFIG.to)} and ${esc(CONFIG.from)}" loading="lazy"></figure>`).join('')}</div>
+  <button class="btn soft" id="bk">📅 Back to all days</button></section>`); $('#bk').onclick=vHome; }
+
+// ---------- one activity per day ----------
+function gRose(el,done){ let n=0; const N=6, steps=['🌱','🌱','🌿','🥀','🌷','🌷','🌹'];
+  el.innerHTML=`<button class="bud" id="bud" aria-label="Tap the flower">${steps[0]}</button><div class="meter"><i id="m"></i></div><p class="muted small" id="t">Tap, tap, tap…</p>`;
+  $('#bud').onclick=()=>{ if(n>=N) return; n++; sfx(400+n*90,.1); $('#bud').textContent=steps[n]; $('#m').style.width=(n/N*100)+'%'; $('#bud').style.transform=`scale(${1+n*.06})`;
+    if(n===N){ $('#t').textContent='It bloomed! 🌹'; win(); done(); } }; }
+function gPropose(el,done){ let tries=0; const lines=['No','Are you sure?','Really sure?','Think again 🥺','You can\'t catch me!','Just press Yes 😄'];
+  el.innerHTML=`<p class="ask">Will you be my Valentine, ${esc(CONFIG.to)}?</p><div class="dodge" id="dz"><button class="btn" id="yes" style="left:6%;top:40px">Yes 💖</button><button class="btn soft" id="no" style="left:58%;top:40px">No</button></div>`;
+  const no=$('#no'), dz=$('#dz'), yes=$('#yes');
+  const run=e=>{ e.preventDefault(); tries++; sfx(300,.05); no.textContent=lines[Math.min(tries,lines.length-1)];
+    no.style.left=Math.random()*(dz.clientWidth-no.offsetWidth)+'px'; no.style.top=Math.random()*(dz.clientHeight-no.offsetHeight)+'px'; yes.style.transform=`scale(${1+Math.min(tries,6)*.12})`; };
+  no.onpointerdown=run; no.onclick=run;
+  yes.onclick=()=>{ el.innerHTML=`<p style="font-size:90px;line-height:1">💍</p><p class="ask">Yes! I knew it.</p>`; win(); done(); }; }
+function gChoco(el,done){ const list=CONFIG.chocolates.slice(0,6); let open=0;
+  el.innerHTML=`<div class="choco">${list.map((_,k)=>`<button data-k="${k}" aria-label="Chocolate ${k+1}">🍫</button>`).join('')}</div><p class="muted small" id="t">${list.length} chocolates to go</p>`;
+  $$('.choco button').forEach(b=>b.onclick=()=>{ if(b.classList.contains('open')) return; b.classList.add('open'); b.textContent=list[+b.dataset.k]; open++; sfx(600+open*60,.1);
+    $('#t').textContent=open<list.length?`${list.length-open} to go`:'All gone. Sweet! 🍫'; if(open===list.length){ win(); done(); } }); }
+function gPuzzle(el,done){ const n=3,N=9,blank=8,img=CONFIG.puzzle; let st=[...Array(N).keys()],moves=0,solved=false;
+  const adj=(a,b)=>Math.abs(a-b)===n||(Math.abs(a-b)===1&&Math.floor(a/n)===Math.floor(b/n));
+  let e=blank,prev=-1; for(let i=0;i<60;i++){ const nb=[e-n,e+n,e-1,e+1].filter(p=>p>=0&&p<N&&adj(p,e)&&p!==prev); const p=nb[Math.floor(Math.random()*nb.length)]; [st[p],st[e]]=[st[e],st[p]]; prev=e; e=p; }
+  if(st.every((v,k)=>v===k)){ [st[7],st[8]]=[st[8],st[7]]; }
+  el.innerHTML=`<div class="pz" id="pz" style="grid-template-columns:repeat(3,1fr)"></div><p class="muted small" id="t">Tap a picture next to the empty space.</p><button class="link" id="skip" hidden>Too tricky? Solve it for me</button>`;
+  const pz=$('#pz'), pos=v=>`${(v%n)*50}% ${Math.floor(v/n)*50}%`;
+  const fin=()=>{ solved=true; st=[...Array(N).keys()]; pz.classList.add('solved'); draw(); $('#skip').hidden=true; $('#t').textContent='Perfect fit 🧸'; win(); done(); };
+  function draw(){ pz.innerHTML=''; st.forEach((v,i)=>{ const b=document.createElement('button'); b.className='tile'+(v===blank&&!solved?' blank':'');
+    if(v!==blank||solved){ b.style.backgroundImage=`url("${img}")`; b.style.backgroundSize='300% 300%'; b.style.backgroundPosition=pos(v); if(!solved) b.innerHTML=`<span>${v+1}</span>`; }
+    b.setAttribute('aria-label',v===blank&&!solved?'Empty space':'Piece '+(v+1)); b.onclick=()=>mv(i); pz.appendChild(b); }); }
+  function mv(i){ if(solved) return; const e=st.indexOf(blank); if(!adj(i,e)) return; [st[i],st[e]]=[st[e],st[i]]; moves++; sfx(520,.05);
+    if(moves===25) $('#skip').hidden=false; if(st.every((v,k)=>v===k)) return fin(); draw(); }
+  $('#skip').onclick=fin; draw(); }
+function gPromise(el,done){ const list=CONFIG.promises; let ok=0;
+  el.innerHTML=`<div class="prom">${list.map((p,k)=>`<button data-k="${k}"><i></i><span>🤞 ${esc(p)}</span></button>`).join('')}</div><p class="muted small" id="t">Hold each one for a second</p>`;
+  $$('.prom button').forEach(b=>{ let t0=0,af=0; const bar=b.querySelector('i');
+    const step=now=>{ const p=Math.min(1,(now-t0)/900); bar.style.width=p*100+'%'; if(p<1) af=requestAnimationFrame(step); else seal(); };
+    const seal=()=>{ if(b.classList.contains('ok')) return; b.classList.add('ok'); b.querySelector('span').textContent='✅ '+list[+b.dataset.k]; ok++; sfx(700+ok*80,.12);
+      if(ok===list.length){ $('#t').textContent='Sealed with a pinky promise 🤞'; win(); done(); } };
+    b.onpointerdown=e=>{ if(b.classList.contains('ok')) return; e.preventDefault(); t0=performance.now(); af=requestAnimationFrame(step); };
+    b.onpointerup=b.onpointerleave=b.onpointercancel=()=>{ cancelAnimationFrame(af); if(!b.classList.contains('ok')) bar.style.width='0'; };
+    b.oncontextmenu=e=>e.preventDefault(); }); }
+function gHug(el,done){ const T=5000; let t0=0,af=0,fin=false;
+  el.innerHTML=`<button class="hugbtn" id="hb" aria-label="Hold for a hug"><span>🤗</span></button><p class="qq" id="t">Hold me…</p>`;
+  const hb=$('#hb'); hb.oncontextmenu=e=>e.preventDefault();
+  const step=now=>{ const p=Math.min(1,(now-t0)/T); hb.style.setProperty('--p',p*100); $('#t').textContent=p<.4?'Hold me…':p<.8?'A little longer…':'Almost…';
+    if(p<1) af=requestAnimationFrame(step); else { fin=true; hb.classList.remove('on'); $('#t').textContent=`Hug delivered to ${CONFIG.from} 🤗`; win(); done(); } };
+  hb.onpointerdown=e=>{ if(fin) return; e.preventDefault(); hb.setPointerCapture(e.pointerId); hb.classList.add('on'); t0=performance.now(); af=requestAnimationFrame(step); sfx(330,.2); };
+  hb.onpointerup=hb.onpointercancel=()=>{ if(fin) return; cancelAnimationFrame(af); hb.classList.remove('on'); hb.style.setProperty('--p',0); $('#t').textContent="Don't let go! Try again"; }; }
+function gKiss(el,done){ const TIME=20,GOAL=12; let score=0,left=TIME,ti=0,sp=0;
+  el.innerHTML=`<div class="hud"><span>💋 <b id="sc">0</b> / ${GOAL}</span><span>⏱ <b id="tl">${TIME}</b>s</span></div><div class="field" id="f"><div class="over" id="ov"><div><p style="font-size:50px">💋</p><p>Catch ${GOAL} kisses in ${TIME} seconds</p><br><button class="btn" id="go">Start</button></div></div></div>`;
+  const f=$('#f'), ov=$('#ov');
+  function spawn(){ const k=document.createElement('button'), gold=Math.random()<.15; k.className='k'; k.textContent=gold?'💖':'💋'; k.setAttribute('aria-label','Kiss');
+    k.style.left=Math.random()*(f.clientWidth-50)+'px'; k.style.top='-50px';
+    k.animate([{transform:'translateY(0)'},{transform:`translateY(${f.clientHeight+70}px)`}],{duration:(2200+Math.random()*1400),easing:'linear'}).onfinish=()=>k.remove();
+    k.onpointerdown=e=>{ e.preventDefault(); if(k.classList.contains('pop')) return; k.classList.add('pop'); score+=gold?3:1; $('#sc').textContent=score; sfx(gold?990:760,.06); setTimeout(()=>k.remove(),250); };
+    f.appendChild(k); }
+  function start(){ score=0; left=TIME; $('#sc').textContent=0; ov.hidden=true; sp=setInterval(spawn,420);
+    ti=setInterval(()=>{ left--; $('#tl').textContent=left; if(left>0) return; clearInterval(ti); clearInterval(sp); f.querySelectorAll('.k').forEach(k=>k.remove());
+      if(score>=GOAL){ ov.innerHTML=`<p class="qq">${score} kisses caught! 💋</p>`; ov.hidden=false; win(); done(); }
+      else { ov.innerHTML=`<div><p class="qq">${score} kisses. So close!</p><br><button class="btn" id="go">Try again</button></div>`; ov.hidden=false; $('#go').onclick=start; } },1000); }
+  $('#go').onclick=start; onLeave(f,()=>{ clearInterval(ti); clearInterval(sp); }); }
+function gQuiz(el,done){ const Q=CONFIG.quiz; let i=0,right=0;
+  function q(){ const it=Q[i], order=it.a.map((_,k)=>k).sort(()=>Math.random()-.5);
+    el.innerHTML=`<span class="eyebrow2">Question ${i+1} of ${Q.length}</span><div class="meter"><i style="width:${i/Q.length*100}%"></i></div><p class="qq">${esc(it.q)}</p>
+      <div class="opts">${order.map(k=>`<button data-k="${k}">${esc(it.a[k])}</button>`).join('')}</div>`;
+    $$('.opts button').forEach(b=>b.onclick=()=>{ if(el.dataset.lock) return; el.dataset.lock=1; const ok=+b.dataset.k===it.ok; if(ok) right++;
+      b.classList.add(ok?'right':'wrong'); if(!ok) $(`.opts button[data-k="${it.ok}"]`).classList.add('right'); sfx(ok?880:220,.15,ok?'triangle':'sawtooth',.06);
+      setTimeout(()=>{ delete el.dataset.lock; i++; i<Q.length?q():end(); },1100); }); }
+  function end(){ const r=right/Q.length; el.innerHTML=`<p style="font-size:80px;line-height:1">${r===1?'🏆':r>=.6?'💖':'😄'}</p><p class="qq">${right} out of ${Q.length}!</p>
+    <p class="muted">${r===1?'You know me better than I know myself.':r>=.6?"You know me so well. I'm impressed.":"We'll have lots to talk about tonight!"}</p>`; win(); done(); }
+  q(); }
+
+// ---------- start ----------
+startBg();
+if(store.get('in',false)) vHome(); else vLock();
+</script>
+</body>
+</html>
