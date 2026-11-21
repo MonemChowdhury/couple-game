@@ -145,7 +145,7 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid var(-
 .cmp{display:grid;grid-template-columns:1fr 1fr;gap:10px;text-align:center}
 .cmp div{background:var(--tile);border-radius:16px;padding:12px 8px;border:3px solid transparent}
 .cmp div.win{border-color:var(--a1)}
-.cmp b{display:block;font:700 28px var(--mono)}
+.cmp b{display:block;font:700 clamp(20px,6vw,24px) var(--mono);white-space:nowrap}
 .cmp span{font-size:14px;color:var(--muted)}
 .verdict{font:600 22px var(--display);text-align:center;text-wrap:balance}
 .scr{position:relative;width:100%;aspect-ratio:16/9;border-radius:18px;overflow:hidden}
@@ -163,9 +163,53 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid var(-
 .addph input{display:none}
 .addph label.btn{cursor:pointer}
 .toast{position:fixed;left:50%;bottom:calc(18px + env(safe-area-inset-bottom,0px));transform:translate(-50%,140%);z-index:30;background:var(--paper);color:var(--ink);
-  border:1px solid var(--line);padding:10px 18px;border-radius:999px;font-weight:800;box-shadow:0 10px 30px rgba(0,0,0,.25);transition:transform .45s cubic-bezier(.3,1.4,.5,1);white-space:nowrap}
+  border:1px solid var(--line);padding:10px 18px;border-radius:999px;font-weight:800;display:flex;align-items:center;box-shadow:0 10px 30px rgba(0,0,0,.25);transition:transform .45s cubic-bezier(.3,1.4,.5,1);white-space:nowrap}
 .toast.show{transform:translate(-50%,0)}
 .credit{color:var(--onbg);opacity:.85;text-align:center;font-size:13px}
+/* v2: twists, commentary, rewards, finale, new games, options */
+.twist{display:flex;gap:12px;align-items:center;padding:12px 14px;border-radius:18px;background:color-mix(in srgb,var(--a2) 22%,var(--tile));border:2px solid var(--a2);animation:twistin .6s cubic-bezier(.3,1.5,.5,1)}
+.twist b{font-size:30px;line-height:1}
+.twist h3{font-size:18px} .twist p{font-size:14px;color:var(--muted)}
+@keyframes twistin{0%{transform:scale(.6) rotate(-4deg);opacity:0}100%{transform:none;opacity:1}}
+.goal{display:flex;justify-content:space-between;font:700 13px var(--mono);color:var(--muted)}
+.node.fin{background:color-mix(in srgb,var(--a1) 25%,var(--tile));border-color:var(--a1)}
+.talk{display:flex;flex-direction:column;gap:6px}
+.talk p{background:var(--tile);border-radius:14px;padding:10px 12px;font-weight:700;font-size:15px;text-align:center}
+.rw{display:flex;flex-direction:column;gap:10px}
+.rw .who2{font:700 13px var(--mono);color:var(--a1);text-transform:uppercase;letter-spacing:.06em}
+.scr .under small{display:block;font:600 13px var(--body);color:var(--muted);margin-top:6px}
+.box{display:grid;place-items:center;gap:6px;width:100%;aspect-ratio:16/9;border-radius:18px;border:none;cursor:pointer;
+  background:linear-gradient(135deg,var(--a1),var(--a2));color:var(--btn);font:600 20px var(--display)}
+.box b{font-size:56px;line-height:1;display:block;animation:wob 1.4s ease-in-out infinite}
+@keyframes wob{0%,100%{transform:rotate(0)}20%{transform:rotate(-9deg)}40%{transform:rotate(8deg)}60%{transform:rotate(-4deg)}}
+.box.open b{animation:boom .5s forwards}
+@keyframes boom{to{transform:scale(2.2);opacity:0}}
+.prize{background:var(--tile);border-radius:18px;padding:18px;text-align:center;font:600 19px var(--display);border:2px dashed var(--a1);animation:pop .4s}
+.opts{gap:10px}
+.opts .grid2 .btn{font-size:17px;border:2px solid var(--line)}
+.trophy{font-size:92px;line-height:1;text-align:center;animation:twistin .9s cubic-bezier(.3,1.5,.5,1)}
+.champ{text-align:center;font:700 clamp(30px,9vw,42px) var(--display);color:var(--a1)}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;text-align:center}
+.stats div{background:var(--tile);border-radius:14px;padding:10px 4px}
+.stats b{display:block;font:700 24px var(--mono)} .stats span{font-size:12px;color:var(--muted)}
+.badge{display:flex;gap:10px;align-items:center;background:var(--tile);border-radius:14px;padding:10px 12px;font-weight:700}
+.badge b{font-size:26px}
+.simon{display:grid;grid-template-columns:1fr 1fr;gap:10px;max-width:320px;width:100%;margin:0 auto}
+.simon button{aspect-ratio:1;border:none;border-radius:22px;font-size:46px;cursor:pointer;background:var(--tile);transition:transform .1s,filter .1s;color:var(--ink)}
+.simon button:nth-child(1){background:color-mix(in srgb,var(--a1) 40%,var(--tile))}
+.simon button:nth-child(2){background:color-mix(in srgb,var(--a2) 40%,var(--tile))}
+.simon button:nth-child(3){background:color-mix(in srgb,var(--a3) 40%,var(--tile))}
+.simon button.lit{transform:scale(1.07);filter:brightness(1.35) saturate(1.4);box-shadow:0 0 0 5px var(--a1)}
+.simon.wait button{pointer-events:none}
+.odd{display:grid;gap:6px;width:100%;max-width:340px;margin:0 auto}
+.odd button{aspect-ratio:1;border:none;border-radius:10px;background:var(--paper);cursor:pointer;padding:0;line-height:1;font-size:inherit;display:grid;place-items:center}
+.odd button.bad{animation:shake .3s}
+.tbar{position:relative;height:64px;border-radius:18px;background:var(--tile);overflow:hidden}
+.tzone{position:absolute;top:0;bottom:0;background:color-mix(in srgb,var(--a3) 45%,transparent);border-left:2px solid var(--a3);border-right:2px solid var(--a3)}
+.tmid{position:absolute;top:0;bottom:0;width:4px;margin-left:-2px;background:var(--a1)}
+.tdot{position:absolute;top:50%;font-size:36px;line-height:1;transform:translate(-50%,-50%)}
+.tries{display:flex;gap:6px;justify-content:center;font-size:22px;min-height:30px}
+.toast button{margin-left:10px;border:none;background:var(--a1);color:var(--btn);border-radius:999px;padding:4px 12px;font:800 14px var(--body);cursor:pointer}
 .credit b{user-select:all}
 @media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
 </style>
@@ -232,14 +276,41 @@ const GAMES = {
  match: {icon:"🃏", title:"Memory match",      how:"Flip two cards at a time and find every pair. Fewer moves wins.", better:"low", unit:"moves", short:"Find the pairs"},
  likely:{icon:"💬", title:"Who's more likely", how:"Answer 8 questions about you two. Then see how many you both answered the same.", better:"agree", short:"Quiz about you two"},
  catch: {icon:"💖", title:"Catch the love",    how:"Tap the falling hearts before time runs out. Gold ones are worth 3.", better:"high", unit:"points", short:"Tap falling hearts"},
- ttt:   {icon:"⭕", title:"Beat the bot",      how:"Win or draw against the computer at tic-tac-toe. A win beats a draw.", better:"high", short:"Tic-tac-toe vs a bot"}
+ ttt:   {icon:"⭕", title:"Beat the bot",      how:"Win or draw against the computer at tic-tac-toe. A win beats a draw.", better:"high", short:"Tic-tac-toe vs a bot"},
+ simon: {icon:"🎵", title:"Echo hearts",       how:"Watch the pattern light up, then tap it back. It gets longer every round. One mistake ends it.", better:"high", unit:"steps", short:"Repeat the pattern"},
+ odd:   {icon:"🔍", title:"Odd one out",       how:"Find the one emoji that's different, as many times as you can before time runs out. Wrong taps cost 2 seconds.", better:"high", unit:"found", short:"Spot the different one"},
+ timing:{icon:"🎯", title:"Perfect timing",    how:"Tap Stop when the heart is inside the green zone. 5 tries. Dead centre is worth 3.", better:"high", unit:"points", short:"Stop at the right moment"}
 };
-const ORDER = ["puzzle","match","likely","catch","ttt"];
+const ORDER = ["puzzle","match","likely","catch","ttt","simon","odd","timing"];
 
 const HOME_NOTES = ["Home is wherever you two are on the same sofa.","Tonight's challenge: make tea for each other, exactly how the other likes it.","Tonight's challenge: no phones for the next 20 minutes. Just you two.","The best part of any day is the end of it, together.","Tonight's challenge: tell each other one thing you noticed today.","You two make ordinary evenings feel special.","Tonight's challenge: slow dance to the next song that plays.","Same house, same jokes, same heart.","Tonight's challenge: plan a tiny trip for next weekend.","Love is sharing the last bite and pretending you're full.","Tonight's challenge: say three things you're grateful for about each other.","Every day with you two is a little love story.","Tonight's challenge: cook a meal together, even a silly one.","Two people, one blanket, endless talks.","Tonight's challenge: look through your oldest photos together.","Still choosing each other, every single day."];
 const FUNNY_NOTES = ["Warning: this couple is dangerously cute.","You two are the reason the snacks never last.","Scientists confirm: you two are 99% chaos, 1% sleep.","Your love is strong. Your Wi-Fi, not always.","Official rule: the loser of the next level makes the tea.","You two laugh at your own jokes. Respect.","Tonight's challenge: send each other your worst selfie.","Relationship status: arguing over who is funnier.","Tonight's challenge: speak only in movie quotes for 2 minutes.","You two are proof that weird plus weird equals perfect.","Tonight's challenge: do your best impression of each other.","Fun fact: the person reading this owes the other a hug."];
 const HOME_DATES = ["Cook together","Movie fort","Photo walk","Dance break","Dessert run","Memory lane","Spa night","Stargazing"];
 const HOME_DATE_DESC = ["Make tonight's dinner as a team, one chef and one helper.","Build a blanket fort and watch a movie inside it.","Walk outside and take 10 photos of each other.","Put on your favourite song and dance in the living room.","Go out together and get your favourite dessert.","Look through your oldest photos and tell the stories.","Face masks, soft music and no phones for an hour.","Find a dark spot and count the stars together."];
+const REWARDS = {
+ miss:{perk:["{l} sends you a voice note saying what they miss most about you.","You pick the song {l} dedicates to you tonight.","{l} owes you a good-morning message that makes you smile.","{l} has to describe your first hug again, in detail.","You choose what you both watch together next time.","{l} sends you a photo of something that reminded them of you today.","{l} writes you a three-line 'countdown to us' message.","You win one extra-long goodnight from {l}."],
+  task:["Tell {w} one small habit of theirs you miss.","Send {w} a photo of where you are right now.","Record a 10-second 'I miss you' in your sleepiest voice.","Tell {w} the first thing you'll do when you see them.","Describe {w}'s laugh in three words.","Send {w} a song that sounds like missing them.","Tell {w} a memory you replay when you miss them.","Plan one tiny surprise for {w}'s next bad day."],
+  both:["Both of you: say one thing you're looking forward to doing together.","Both of you: share the last photo you took and the story behind it.","Count down from 3 and say 'I miss you' at the same time.","Both of you: name the place you'd teleport to together right now.","Swap one tiny secret you've never told each other.","Both of you: pick a song and play it at the same time."]},
+ rom:{perk:["{l} owes you a compliment, and you pick the topic.","{l} writes you a short love poem. Rhyming is optional.","You choose the next date, and {l} plans it.","{l} tells you the exact moment they knew you were the one.","{l} gives you three reasons you're their favourite person.","You earn a slow dance with {l} to the song of your choice.","{l} owes you a handwritten note. A photo of it counts.","{l} plans a 'just because' surprise for you this week."],
+  task:["Tell {w} what you love most about their eyes.","Say 'I love you' to {w} in a way you've never said it.","Tell {w} your favourite memory of the two of you.","Give {w} a sweet new nickname.","Describe your dream date with {w} in one sentence.","Tell {w} one thing they do that makes you feel safe.","Write {w} a one-line love letter right now.","Tell {w} what you'd say about them in a wedding speech."],
+  both:["Look at each other for 10 seconds without laughing.","Both of you: finish the sentence 'I fell for you when…'.","Pick a song together that's officially 'your song' tonight.","Both of you: name one dream you want to chase together.","Take turns saying three things you're grateful for about each other.","Plan your next date together. You have one minute!"]},
+ play:{perk:["{l} has to do your victory dance for you.","You get to give {l} a new name until the next level.","{l} must talk in an accent of your choice for 2 minutes.","{l} sends you their silliest selfie. No retakes.","{l} must cheer your name like a crazy sports fan.","{l} gives you a dramatic movie-trailer intro.","You can make one silly rule for the next level.","{l} has to call you 'Your Majesty' until the next level."],
+  task:["Do your best impression of {w}.","Sing one line of any song to {w}, very dramatically.","Tell {w} the worst joke you know.","Talk like a pirate until the next level starts.","Act out an animal and let {w} guess it.","Show {w} your most embarrassing old photo.","Invent a secret handshake and teach it to {w}.","Announce {w} as the winner like a game-show host."],
+  both:["Stare-off! First one to laugh does 5 jumping jacks.","Both of you: make your funniest face. Vote on the winner.","Rock, paper, scissors, best of 3. The loser picks the next snack.","Tell a story together, one word each, for 30 seconds.","Both of you: do a 10-second celebration dance.","Both of you: name the funniest thing the other one ever did."]},
+ cozy:{perk:["{l} makes you a tea or coffee exactly how you like it (or sends you one).","You get the comfiest blanket. {l} gets the leftover corner.","{l} reads you a short story or a poem.","You choose the snack for your next movie night.","{l} owes you a 5-minute shoulder massage.","You pick tonight's movie. No complaints from {l}.","{l} tells you a bedtime story starring the two of you.","{l} owes you breakfast, any day you choose."],
+  task:["Tell {w} your idea of a perfect lazy Sunday together.","Tell {w} your comfort food and why.","Tell {w} the cosiest memory you have together.","Describe the home you'd build with {w} in three words.","Make {w} a playlist of 3 cozy songs.","Tell {w} one thing that instantly makes you feel calm.","Promise {w} a hot-drink date. Set the day now.","Tell {w} what you'd cook for them on a rainy night."],
+  both:["Both of you: name your perfect rainy-day plan.","Both of you: share your favourite blanket-and-movie film.","Both of you: describe your dream kitchen.","Take three slow breaths together. Then smile.","Plan a no-phones evening together this week.","Both of you: say what 'home' means to you."]},
+ happy:{perk:["{l} lists three things they love about your smile.","You get a 'yes' coupon: {l} says yes to one small wish.","{l} plans a fun outing for the two of you.","{l} sends you a hype message like you just won the Olympics.","You pick the next adventure, and {l} has to join.","{l} treats you to your favourite dessert.","{l} gives you a standing ovation. Literally.","You get bragging rights until tomorrow."],
+  task:["Tell {w} the funniest moment you two ever had.","Give {w} a big cheer, at least 5 seconds long.","Tell {w} one thing they did this week that made you happy.","Share a happy song with {w} and dance for 10 seconds.","Tell {w} your favourite thing about your life together.","Plan a sunny-day picnic with {w}. Pick the date.","Give {w} a high five, real or virtual.","Tell {w} one thing about them you're proud of."],
+  both:["Both of you: share the best thing that happened today.","Both of you: name one place you want to travel to together.","Both of you: sing the chorus of a happy song.","Both of you: share one thing you're excited about this month.","Both of you: name 3 things that made you laugh this week.","Celebration dance together. 10 seconds!"]},
+ dream:{perk:["{l} describes your dream future together, in detail.","{l} tells you what they'd name your future pet.","You choose your next dream trip, and {l} starts planning it.","{l} writes the first line of your love story, like a novel.","{l} tells you about a dream they had about you.","{l} picks a star and names it after you.","{l} shares one wish they make for the two of you.","{l} describes the two of you, ten years from now."],
+  task:["Tell {w} where you see the two of you in five years.","Describe a perfect day with {w}, from morning to night.","Tell {w} a wish you've never said out loud.","Name the song that would play at the end of your love story.","Tell {w} which country you'd move to together.","Invent a holiday just for the two of you and name it.","Tell {w} which superpower you'd share.","Describe {w} as a character in a fairytale."],
+  both:["Both of you: share one dream for next year.","Both of you: describe the best room in your dream home.","Both of you: describe a perfect starry night together.","Make a wish together. Don't tell. Just smile.","Both of you: name the city for your dream holiday.","Both of you: share one thing you hope never changes between you."]}
+};
+const MYSTERY = ["🎟️ A 'skip one task' pass. Use it any time you like.","💌 {l} sends you a surprise message tomorrow morning.","👑 You choose the mood for the rest of the game.","🍫 {l} owes you a treat of your choice.","📸 {l} recreates your favourite photo of the two of you.","🎶 You pick a song, and {l} sings the chorus to you.","🧸 {l} owes you one hug that lasts 20 seconds.","✨ Three wishes! {l} grants one small wish each day for 3 days."];
+const GRAND = ["{l} plans the next date, and {w} just shows up.","{l} cooks (or orders) {w}'s favourite meal.","{w} gets a full 'yes day' from {l}.","{l} writes {w} a real letter, on paper.","{w} picks the next three movies you watch together.","{l} makes {w} a champion's crown. Homemade counts!"];
+const GRAND_BOTH = ["Plan a date together this week. You both earned it.","Treat yourselves to your favourite dessert together.","Pick a song and dance together, right now.","Write each other one line about tonight and keep it."];
+const CLOSING = {miss:"Every game you play brings the next hug a little closer.",rom:"Some games you win. This one, you both did.",play:"Officially the most fun couple in the world.",cozy:"Now go get comfy. You've both earned it.",happy:"Keep laughing like this, always.",dream:"The best chapters of your story are still ahead."};
 const SILLY_DARES = ["send a selfie with your silliest face","sing one line of a song in a voice note","do your best impression of the winner","send a voice note in a cartoon voice","let the winner pick your profile picture for a day","tell the winner your most embarrassing story"];
 const ROM_PRIZES = ["send the winner a sweet voice note","write the winner a three-line love poem","tell the winner what you love most about them","plan the winner's favourite date","send the winner a photo that made you think of them","say I love you in a brand-new way"];
 
@@ -251,16 +322,16 @@ const STYLES = {
  rom:  {e:"💕", label:"Romantic", sub:"We're soft for each other", name:"Love Story", rule:"Lose a level and you owe the winner something sweet."}
 };
 const STYLE_IDS = ["comp","team","silly","rom"];
-const LENS = [{e:"⚡",label:"Quick",sub:"About 5 minutes",rule:"Short rounds: 5 quiz questions, 15-second catch, small card games."},
-              {e:"🌙",label:"Chill",sub:"About 15 minutes",rule:"Normal rounds: 8 quiz questions, 20-second catch."},
-              {e:"🔥",label:"All night",sub:"As long as we want",rule:"Long rounds: bigger card games and a 25-second catch."}];
+const LENS = [{e:"⚡",label:"Quick",sub:"5 levels · about 10 min",rule:"5 levels to the finish line, with short rounds."},
+              {e:"🌙",label:"Chill",sub:"10 levels · about 25 min",rule:"10 levels to the finish line."},
+              {e:"🔥",label:"All night",sub:"15 levels · the full journey",rule:"15 levels to the finish line, with longer rounds."}];
 const DIFFS = [{e:"🙂",label:"Easy",sub:"Relaxed and sweet"},{e:"😎",label:"Medium",sub:"A little challenge"},{e:"😈",label:"Hard",sub:"Bring it on"}];
 const popcount = n => { let c=0; while(n){ c+=n&1; n>>=1; } return c; };
 function encodeD(d){ const n=(d.sit==='ld'?0:1)|(STYLE_IDS.indexOf(d.style)<<1)|(d.len<<3)|(d.diff<<5)|(d.mask<<7);
   const c=ALPH[n&31]+ALPH[(n>>5)&31]+ALPH[(n>>10)&31]; return c+ALPH[cyrb53(c+SECRET)%32]; }
 function decodeD(code){ code=String(code||'').toUpperCase().trim(); if(code.length!==4) return null; const c=code.slice(0,3);
   if(ALPH[cyrb53(c+SECRET)%32]!==code[3]) return null; const v=[...c].map(ch=>ALPH.indexOf(ch)); if(v.some(x=>x<0)) return null;
-  const n=v[0]|(v[1]<<5)|(v[2]<<10), d={sit:n&1?'home':'ld', style:STYLE_IDS[(n>>1)&3], len:(n>>3)&3, diff:(n>>5)&3, mask:(n>>7)&31};
+  const n=v[0]|(v[1]<<5)|(v[2]<<10), d={sit:n&1?'home':'ld', style:STYLE_IDS[(n>>1)&3], len:(n>>3)&3, diff:(n>>5)&3, mask:(n>>7)&255};
   if(d.len>2||d.diff>2||popcount(d.mask)<2) return null; d.code=code; return d; }
 let D = null;
 const GLIST = () => ORDER.filter((_,i)=>(D.mask>>i)&1);
@@ -303,8 +374,26 @@ async function addMyPhotos(files){ files=[...files].filter(f=>/^image\//.test(f.
 const nm = r => CONFIG[r];
 const other = r => r==='her'?'him':'her';
 const starterOf = L => L%2 ? 'her' : 'him';
-const gameOf = L => GLIST()[(L-1)%GLIST().length];
-const tierOf = L => Math.floor((L-1)/GLIST().length) + D.diff;
+const NLV = () => [5,10,15][D.len];
+const runOf = () => store.get('run_'+D.code,0);
+function rng(seed){ let a=seed>>>0; return ()=>{ a=(a+0x6D2B79F5)|0; let t=Math.imul(a^(a>>>15),1|a); t=(t+Math.imul(t^(t>>>7),61|t))^t; return ((t^(t>>>14))>>>0)/4294967296; }; }
+let SEQ={key:null,list:[]};
+function seqFor(){ const key=D.code+'|'+runOf(); if(SEQ.key===key) return SEQ.list;
+  const g=GLIST(), N=NLV(), out=[]; let lap=0;
+  while(out.length<N){ const r=rng(cyrb53(key+'|lap'+lap)), a=g.slice();
+    for(let k=a.length-1;k>0;k--){ const j=Math.floor(r()*(k+1)); [a[k],a[j]]=[a[j],a[k]]; }
+    if(out.length&&a.length>1&&a[0]===out[out.length-1]) [a[0],a[a.length-1]]=[a[a.length-1],a[0]];
+    out.push(...a); lap++; }
+  SEQ={key,list:out.slice(0,N)}; return SEQ.list; }
+const gameOf = L => seqFor()[(Math.min(L,NLV())-1)];
+function twistOf(L){ const N=NLV(); if(L>=N) return 'final'; if(L===1) return null;
+  const x=rng(cyrb53(D.code+'|'+runOf()+'|tw'+L))(); return x<.2?'double':x<.36?'boss':x<.54?'mystery':null; }
+const TWISTS = { double:{e:"⚡",name:"Double points",desc:"The winner of this level gets 2 points."},
+  boss:{e:"😈",name:"Boss level",desc:"This one is extra hard. Good luck!"},
+  mystery:{e:"🎁",name:"Mystery box",desc:"The winner opens a mystery prize."},
+  final:{e:"🏁",name:"Final level",desc:"Worth 3 points. Everything is on the line!"} };
+const ptsOf = L => ({final:3,double:2}[twistOf(L)]||1);
+const tierOf = L => { const N=NLV(); return D.diff + Math.round(3*(Math.min(L,N)-1)/Math.max(1,N-1)) + (twistOf(L)==='boss'?1:0); };
 const clamp = x => Math.max(0,Math.min(255,Math.round(x)));
 const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -361,7 +450,21 @@ function applyTheme(id, announce){ const t=THEMES[id]; THEME=id; store.set('them
 function pickTheme(moodId){ const pool=MOODS.find(m=>m.id===moodId).t, last=store.get('theme',null);
   const options=pool.filter(x=>x!==last); return options[Math.floor(Math.random()*options.length)]||pool[0]; }
 function nextTheme(){ const m=MOODS.find(m=>m.id===MOOD); if(!m) return; applyTheme(m.t.find(x=>x!==THEME)||m.t[0], true); }
-let toastT=0; function toast(msg){ const t=$('#toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove('show'),2400); }
+let toastT=0; function toast(msg, undo){ const t=$('#toast'); t.textContent=msg; clearTimeout(toastT);
+  if(undo){ const b=document.createElement('button'); b.textContent='Undo'; b.onclick=()=>{ t.classList.remove('show'); undo(); }; t.appendChild(b); }
+  t.classList.add('show'); toastT=setTimeout(()=>t.classList.remove('show'), undo?6000:2400); }
+// One tap, with Undo in case it was an accident.
+function startOver(){ const prevS=store.get(SKEY(),null), prevRun=runOf(), prevSeen=store.get('seenTalk',null);
+  store.set(SKEY(),null); store.set('run_'+D.code,prevRun+1); S=null; loadState();   vHome(); toast('New game from Level 1', ()=>{ store.set(SKEY(),prevS); store.set('run_'+D.code,prevRun); S=null; loadState(); vHome(); }); }
+function redesign(){ const prev={design:store.get('design',null), me:ME, sk:SKEY(), st:store.get(SKEY(),null)};
+  store.set(SKEY(),null); store.set('design',null); D=null; ME=null; store.set('me',null); S=null;
+  A={sit:null,who:null,style:null,mask:255,len:1,diff:1}; try{ history.replaceState(null,'',location.pathname); }catch(err){} vSetup(0);
+  toast('Redesigning the game', ()=>{ setDesign(decodeD(prev.design)); ME=prev.me; store.set('me',ME); store.set(prev.sk,prev.st); S=null; loadState(); vHome(); }); }
+function optsHTML(){ return `<section class="card opts"><h3>Game options</h3><div class="grid2">
+  <button class="btn alt" id="reset">↺ Start over</button><button class="btn alt" id="redesign">✏️ Redesign</button></div>
+  ${MODE==='two'&&ME?`<button class="btn alt" id="switch">Not ${esc(nm(ME))}? Switch player</button>`:''}</section>`; }
+function bindOpts(){ if($('#reset')) $('#reset').onclick=startOver; if($('#redesign')) $('#redesign').onclick=redesign;
+  if($('#switch')) $('#switch').onclick=()=>{ ME=other(ME); store.set('me',ME); S=null; loadState(); vHome(); }; }
 
 // ---------- game state ----------
 const SKEY = () => 's_'+D.code+'_'+(MODE==='one'?'one':ME);
@@ -375,7 +478,7 @@ function enterLevel(L, theirs){ S.lvl=L; S.mine=null; S.theirs=theirs??null; S.a
 
 // ---------- views ----------
 function show(html){ V.innerHTML=html; window.scrollTo({top:0,behavior:reduce?'auto':'smooth'}); }
-function chrome(on){ $('#top').hidden=!on; if(on&&S) $('#lvChip').textContent='Level '+S.lvl; }
+function chrome(on){ $('#top').hidden=!on; if(on&&S&&D) $('#lvChip').textContent= S.lvl>NLV() ? 'Finished 🏆' : 'Level '+S.lvl+' of '+NLV(); }
 
 function vLock(){ chrome(false); let typed='';
   show(`<section class="card"><span class="eyebrow">${CONFIG.from?'A gift from '+esc(CONFIG.from):'A gift for two'}</span>
@@ -389,7 +492,7 @@ function vLock(){ chrome(false); let typed='';
         else { code.classList.add('bad'); sfx(160,.25,'sawtooth',.05); setTimeout(()=>{ code.classList.remove('bad'); typed=''; draw(); },450); } } };
     $('#pad').appendChild(b); }); draw(); }
 
-let A = {sit:null, who:null, style:null, mask:31, len:1, diff:1};
+let A = {sit:null, who:null, style:null, mask:255, len:1, diff:1};
 function setupSteps(){ return ['sit'].concat(A.sit==='ld'?['who']:[]).concat(['style','games','len','diff']); }
 function vSetup(i){ chrome(false); i=i||0; const steps=setupSteps(), id=steps[i], tot=steps.length;
   const opt=(v,e,label,sub,on)=>`<button class="mood${on?' on':''}" data-v="${v}" aria-pressed="${on?'true':'false'}"><b>${e}</b>${label}<small>${sub}</small></button>`;
@@ -416,10 +519,12 @@ function finishSetup(){ const d=decodeD(encodeD(A)); setDesign(d); if(MODE==='tw
 function designHTML(){ const st=STYLES[D.style];
   return `<div class="tags"><span class="tag">${D.sit==='ld'?'✈️ Long distance':'🏠 Together'}</span><span class="tag">${st.e} ${st.label}</span>
     <span class="tag">${LENS[D.len].e} ${LENS[D.len].label}</span><span class="tag">${DIFFS[D.diff].e} ${DIFFS[D.diff].label}</span></div>
-    <ul class="rules"><li><b>🎮</b><span>${GLIST().length} games take turns as levels: ${GLIST().map(g=>GAMES[g].title).join(', ')}. They get harder every lap.</span></li>
+    <ul class="rules"><li><b>🏁</b><span>${NLV()} levels to the finish line, then a grand finale with a champion. The final level is worth 3 points.</span></li>
+    <li><b>🎮</b><span>${GLIST().length} games, mixed in a new order each time: ${GLIST().map(g=>GAMES[g].title).join(', ')}. They get harder as you go.</span></li>
+    <li><b>🎁</b><span>Surprise twists pop up: ⚡ double points, 😈 boss levels and 🎁 mystery boxes.</span></li>
     <li><b>${st.e}</b><span>${st.rule}</span></li><li><b>${LENS[D.len].e}</b><span>${LENS[D.len].rule}</span></li>
     <li><b>${D.sit==='ld'?'🔑':'📱'}</b><span>${D.sit==='ld'?'Finish your turn, send the key on WhatsApp, and your partner unlocks their turn.':'Play your turn, then pass the phone. Both play every level.'}</span></li>
-    <li><b>${D.sit==='ld'?'📞':'🍿'}</b><span>Love notes and bonus ideas are picked for couples who are ${D.sit==='ld'?'far apart':'together'}.</span></li></ul>`; }
+    <li><b>💌</b><span>Prizes and tasks change with your mood and the score. The winner and the loser get different things.</span></li></ul>`; }
 function vReady(designer){ chrome(false); const O = MODE==='two' ? other(ME) : null;
   show(`<section class="card"><span class="eyebrow">${designer?'Your game is ready':'Your partner designed this game'}</span><h1>${esc(gameTitle())}</h1>${designHTML()}
     ${MODE==='two'&&designer?`<div class="stack"><h3>Send this game to ${esc(nm(O))}</h3><p class="muted small">They'll get exactly the same game, so your keys work for each other.</p>
@@ -454,7 +559,8 @@ function vMood(back){ chrome(false);
   show(`<section class="card"><span class="eyebrow">New theme every time</span><h2>How are you feeling today, ${esc(who)}?</h2>
     <p class="muted">Pick a mood and the whole game changes to match it.</p>
     <div class="moods">${MOODS.map(m=>`<button class="mood" data-m="${m.id}"><b>${m.e}</b>${m.label}<small>${m.sub}</small></button>`).join('')}</div>
-    ${back?'<button class="link" id="mBack">Keep the current theme</button>':''}</section>`);
+    ${back?'<button class="link" id="mBack">Keep the current theme</button>':''}</section>${D?optsHTML():''}`);
+  if(D){ if(!S) loadState(); bindOpts(); }
   $$('.mood').forEach(b=>b.onclick=()=>{ MOOD=b.dataset.m; store.set('mood',MOOD); applyTheme(pickTheme(MOOD)); sfx(800,.1); vHome(); });
   if(back) $('#mBack').onclick=vHome; }
 $('#themeChip').onclick=()=>vMood(true);
@@ -465,14 +571,17 @@ function tickClocks(){ try{ const f=tz=>new Date().toLocaleTimeString('en-US',{t
   if($('#cH')){ $('#cH').textContent=f(CONFIG.herTz); $('#cM').textContent=f(CONFIG.himTz); } }catch(e){} }
 setInterval(tickClocks,30000);
 
-function pathHTML(){ const L=S.lvl, from=Math.max(1,L-2), to=from+5; let h='';
-  for(let i=from;i<=to;i++){ const g=GAMES[gameOf(i)], cls=i<L?'done':i===L?'cur':'lock';
+function pathHTML(){ const L=Math.min(S.lvl,NLV()), N=NLV(), from=Math.max(1,Math.min(L-2,N-5)), to=Math.min(N,from+5); let h='';
+  for(let i=from;i<=to;i++){ const g=GAMES[gameOf(i)], cls=(i<S.lvl?'done':i===L?'cur':'lock')+(i===N?' fin':'');
     if(i>from) h+=`<span class="seg ${i<=L?'done':''}"></span>`;
-    h+=`<span class="node ${cls}" title="Level ${i}">${i<L?'✓':g.icon}<small>${i===L?'Lv '+i:i}</small></span>`; }
+    h+=`<span class="node ${cls}" title="Level ${i}">${i<S.lvl?'✓':i===N?'🏆':g.icon}<small>${i===L?'Lv '+i:i}</small></span>`; }
+  if(to<N) h+=`<span class="seg"></span><span class="node fin lock">🏆<small>${N}</small></span>`;
   return `<div class="path" aria-label="Level map">${h}</div>`; }
-function scoreHTML(){ if(D.style==='team') return `<div class="score solo"><div><b>${S.counted}</b><span>levels cleared together 🤝</span></div></div>
+function twistHTML(L){ const t=TWISTS[twistOf(L)]; if(!t) return '';
+  return `<div class="twist"><b>${t.e}</b><div><h3>${t.name}!</h3><p>${t.desc}</p></div></div>`; }
+function scoreHTML(){ if(D.style==='team') return `<div class="score solo"><div><b>${S.counted}</b><span>of ${NLV()} levels cleared together 🤝</span></div></div>
   ${S.agree?`<p class="muted small" style="text-align:center">💞 You've answered ${S.agree} questions the same way so far</p>`:''}`;
-  return `<div class="score"><div><b>${S.wins.her}</b><span>${esc(nm('her'))}</span></div><span class="vs">LEVEL WINS</span>
+  return `<div class="score"><div><b>${S.wins.her}</b><span>${esc(nm('her'))}</span></div><span class="vs">POINTS</span>
   <div><b>${S.wins.him}</b><span>${esc(nm('him'))}</span></div></div>
   ${S.agree?`<p class="muted small" style="text-align:center">💞 You've answered ${S.agree} questions the same way so far</p>`:''}`; }
 function shareText(L,key){ return `💌 ${nm(ME)} finished Level ${L} of our game! Your key: ${key}\n${gameLink()}`; }
@@ -487,7 +596,7 @@ function keyInputHTML(label){ return `<label class="stack"><span style="font-wei
   <input class="keyin" id="keyIn" inputmode="text" autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="9" placeholder="ABC-123"></label>
   <p class="err" id="keyErr"></p><button class="btn big" id="keyGo">Unlock</button>`; }
 
-function vHome(){ if(!S) loadState(); if(!THEME) applyTheme(store.get('theme','moon')); chrome(true);
+function vHome(){ if(!S) loadState(); if(!THEME) applyTheme(store.get('theme','moon')); if(S.lvl>NLV()) return vFinale(); chrome(true);
   const L=S.lvl, gid=gameOf(L), g=GAMES[gid], O=MODE==='two'?other(ME):null;
   let status='';
   if(MODE==='one'){
@@ -513,27 +622,23 @@ function vHome(){ if(!S) loadState(); if(!THEME) applyTheme(store.get('theme','m
   const first = !store.get('seenHelp',false);
   show(`<section class="card"><div class="row between"><span class="eyebrow">${MODE==='one'?'Playing together':'Hi '+esc(nm(ME))+' 👋'}</span>
       <button class="link" id="photos">📸 Our photos</button></div>
-    ${MODE==='two'?clocksHTML():''}${pathHTML()}${status}</section>
+    ${MODE==='two'?clocksHTML():''}${pathHTML()}${twistHTML(L)}${status}</section>
     <section class="card"><div class="row between"><h3>${esc(gameTitle())}</h3><button class="link" id="rules">Rules</button></div><div id="rulesBox" hidden>${designHTML()}</div></section>
     ${first?`<section class="card"><h3>How it works</h3><ol class="steps">
-      <li>Each level is a new mini game. You take turns: ${esc(nm('her'))} starts odd levels, ${esc(nm('him'))} starts even ones.</li>
+      <li>There are ${NLV()} levels. Each one is a mini game, and the final level is worth 3 points. Most points wins!</li>
+      <li>Watch for surprise twists: ⚡ double points, 😈 boss levels and 🎁 mystery boxes.</li>
       ${MODE==='two'?`<li>Finish your turn and you get a key. Send it on WhatsApp.</li><li>Your partner types the key to unlock their turn. When both finish, you see who won.</li>`:'<li>When one of you finishes, pass the phone. When both finish, you see who won.</li>'}
       <li>The theme changes every level. Tap the theme at the top to match your mood.</li></ol>
       <button class="btn alt" id="gotIt">Got it</button></section>`:''}
     <section class="card">${scoreHTML()}</section>
-    <div class="row center">${MODE==='two'?'<button class="link" id="switch">Not '+esc(nm(ME))+'? Switch player</button>':''}
-      <button class="link" id="reset">Start over</button><button class="link" id="redesign">Redesign the game</button></div>`);
+    ${optsHTML()}`);
   tickClocks();
   const pb=$('#playBtn'); if(pb) pb.onclick=()=>vGame(MODE==='one'?(S.phase==='a'?starterOf(L):other(starterOf(L))):ME);
   if($('#keyGo')){ const go=()=>onKey($('#keyIn').value); $('#keyGo').onclick=go; $('#keyIn').onkeydown=e=>{ if(e.key==='Enter') go(); }; }
   if($('#resend')) $('#resend').onclick=()=>{ $('#resendBox').innerHTML=shareHTML(S.lastKey.L,S.lastKey.k); bindCopy(); $('#resend').hidden=true; };
   if($('#gotIt')) $('#gotIt').onclick=()=>{ store.set('seenHelp',true); vHome(); };
   $('#photos').onclick=vPhotos; $('#rules').onclick=()=>{ $('#rulesBox').hidden=!$('#rulesBox').hidden; };
-  if($('#switch')) $('#switch').onclick=()=>{ ME=other(ME); store.set('me',ME); S=null; loadState(); vHome(); };
-  $('#redesign').onclick=e=>{ const b=e.target; if(b.dataset.sure){ store.set(SKEY(),null); store.set('design',null); D=null; ME=null; store.set('me',null); S=null;
-    A={sit:null,who:null,style:null,mask:31,len:1,diff:1}; try{ history.replaceState(null,'',location.pathname); }catch(err){} vSetup(0); }
-    else { b.dataset.sure=1; b.textContent='Tap again: new design, progress resets'; } };
-  $('#reset').onclick=e=>{ const b=e.target; if(b.dataset.sure){ store.set(SKEY(),null); S=null; loadState(); vHome(); } else { b.dataset.sure=1; b.textContent='Tap again to erase progress on this phone'; } };
+  bindOpts();
   bindCopy(); const p=$('.path .cur'); if(p) p.scrollIntoView({inline:'center',block:'nearest'}); }
 
 function onKey(code){ const O=other(ME), L=S.lvl, err=$('#keyErr');
@@ -558,11 +663,13 @@ function vPhotos(){ chrome(true); const mine=!!store.get('myPhotos',null);
 
 // ---------- game host ----------
 function vGame(player){ chrome(true); const L=S.lvl, gid=gameOf(L), g=GAMES[gid], t=tierOf(L);
-  show(`<section class="card"><div class="row between"><span class="eyebrow">Level ${L} · ${esc(nm(player))}'s turn</span><button class="link" id="quit">Back to map</button></div>
+  const tw=TWISTS[twistOf(L)];
+  show(`<section class="card"><div class="row between"><span class="eyebrow">Level ${L} of ${NLV()} · ${esc(nm(player))}'s turn</span><button class="link" id="quit">Back to map</button></div>
+    ${tw?`<div class="twist"><b>${tw.e}</b><div><h3>${tw.name}!</h3><p>${tw.desc}</p></div></div>`:''}
     <h2>${g.icon} ${g.title}</h2><p class="muted">${g.how}</p><div class="stack" id="area"></div></section>`);
   $('#quit').onclick=vHome;
   const done = payload => onPlayed(player, clamp(payload));
-  ({puzzle:gPuzzle, match:gMatch, likely:gLikely, catch:gCatch, ttt:gTTT})[gid]($('#area'), t, done);
+  ({puzzle:gPuzzle, match:gMatch, likely:gLikely, catch:gCatch, ttt:gTTT, simon:gSimon, odd:gOdd, timing:gTiming})[gid]($('#area'), t, done);
   window.__finish = done; }
 
 function onPlayed(player, payload){
@@ -587,34 +694,95 @@ function vSent(){ const O=other(ME), L=S.lvl;
 function verdict(gid, pa, pb, ra, rb){ const g=GAMES[gid], nq=D.len===0?5:8;
   if(pb==null) return {text:`${nm(rb)} has already moved ahead. On to the next level!`, w:null};
   if(gid==='likely'){ let same=0; for(let i=0;i<nq;i++) if(((pa>>i)&1)===((pb>>i)&1)) same++;
-    return {text: same>=nq*.75?`You agreed on ${same} of ${nq}. You really know each other! 💞`: same>=nq/2?`You agreed on ${same} of ${nq}. Talk about the rest ${D.sit==='ld'?'on your next call':'over dinner'} 😄`:`Only ${same} of ${nq} the same! Time for a long chat 😂`, same, w:null}; }
+    const ok=same>=Math.ceil(nq/2)&&D.style!=='team';
+    return {text: (same>=nq*.75?`You agreed on ${same} of ${nq}. You really know each other! 💞`: same>=nq/2?`You agreed on ${same} of ${nq}. Talk about the rest ${D.sit==='ld'?'on your next call':'over dinner'} 😄`:`Only ${same} of ${nq} the same! Time for a long chat 😂`)+(ok?' +1 point each!':''), same, w:ok?'both':null}; }
   if(D.style==='team'){ const sum=pa+pb;
     return {text: gid==='ttt' ? `You both got past the bot (${pa+pb} of 4 team points). Level cleared together! 🤝` :
       `Team total: ${sum} ${g.unit}. Level cleared together! 🤝`, w:null}; }
   const better = g.better==='low' ? (a,b)=>a<b : (a,b)=>a>b;
   if(pa===pb) return {text:"It's a tie! Perfect match 💞", w:'tie'};
-  const w = better(pa,pb)?ra:rb, lose=w===ra?rb:ra, L=S.lvl;
-  const extra = D.style==='silly' ? ` ${nm(lose)} must ${SILLY_DARES[L%SILLY_DARES.length]} 🤪` : D.style==='rom' ? ` ${nm(lose)}, ${ROM_PRIZES[L%ROM_PRIZES.length]} 💌` : '';
-  return {text:`${nm(w)} wins Level ${L}! 🏆${extra}`, w}; }
-function fmt(gid,p){ if(p==null) return '—'; if(gid==='ttt') return ['Lost','Draw','Win'][p]||p; if(gid==='likely') return (D.len===0?5:8)+' answers'; return p+' '+GAMES[gid].unit; }
+  const w = better(pa,pb)?ra:rb, L=S.lvl;
+  const pts=ptsOf(L); return {text:`${nm(w)} wins Level ${L}${pts>1?` and ${pts} points`:''}! 🏆`, w}; }
+function fmt(gid,p){ if(p==null) return '—'; if(gid==='ttt') return ['Lost','Draw','Win'][p]||p; if(gid==='likely') return (D.len===0?5:8)+' answers'; const u=GAMES[gid].unit; return p+' '+(p===1&&/s$/.test(u)?u.slice(0,-1):u); }
 
-function vReveal(firstRole){ chrome(true); const L=S.lvl, gid=gameOf(L);
+function talkLines(before, v, L){ const N=NLV(), out=[];
+  if(D.style==='team'){ out.push(`🤝 ${L} of ${N} levels cleared together!`); }
+  else { const a=S.wins.her, b=S.wins.him, lead=a>b?'her':b>a?'him':null, a0=before.her, b0=before.him, lead0=a0>b0?'her':b0>a0?'him':null;
+    if(lead&&lead0&&lead!==lead0) out.push(`🔄 ${nm(lead)} takes the lead!`);
+    else if(lead&&!lead0&&L>1) out.push(`🚀 ${nm(lead)} pulls ahead!`);
+    let k=0, h=S.hist||[], last=h[h.length-1]; if(last) for(let i=h.length-1;i>=0&&h[i]===last;i--) k++;
+    if(k>=3) out.push(`🔥 ${nm(last)} is on a ${k}-level winning streak!`);
+    if(!lead&&L>1) out.push(`⚖️ All square at ${a}–${b}!`);
+    if(lead&&Math.abs(a-b)>=3&&L<N) out.push(`😬 ${nm(other(lead))}, time for a comeback!`); }
+  const left=N-L;
+  if(left===1) out.push('🏁 Next up: the FINAL level, worth 3 points!');
+  else if(left>1&&left<=3) out.push(`⏳ Only ${left} levels left!`);
+  if(L===Math.ceil(N/2)&&left>0) out.push('🎡 Halfway there! Spin the bonus wheel below.');
+  return out.slice(0,3); }
+function pickFresh(key, arr){ const k='seen_'+key+'_'+(MODE==='one'?'one':ME); let seen=store.get(k,[]);
+  let av=arr.map((_,i)=>i).filter(i=>!seen.includes(i)); if(!av.length){ seen=[]; av=arr.map((_,i)=>i); }
+  const i=av[Math.floor(Math.random()*av.length)]; store.set(k,seen.concat(i)); return arr[i]; }
+function makeRewards(v, L){ const M=REWARDS[MOOD]?MOOD:'rom', R=REWARDS[M], tw=twistOf(L), cards=[];
+  const fill=(t,w,l)=>t.replace(/\{w\}/g,nm(w)).replace(/\{l\}/g,nm(l));
+  if(v.w==='her'||v.w==='him'){ const w=v.w, l=other(w);
+    let tasks=R.task; if(D.style==='silly') tasks=tasks.concat(SILLY_DARES.map(d=>'Silly dare: '+d.charAt(0).toUpperCase()+d.slice(1)+'.'));
+    if(D.style==='rom') tasks=tasks.concat(ROM_PRIZES.map(d=>d.charAt(0).toUpperCase()+d.slice(1).replace(/the winner/g,'{w}')+'.'));
+    const mys = tw==='mystery'||tw==='final';
+    cards.push({who:w, kind:mys?'mystery':'perk', text:fill(mys?pickFresh('mys',MYSTERY):pickFresh(M+'p',R.perk),w,l)});
+    cards.push({who:l, kind:'task', text:fill(pickFresh(M+'t'+D.style,tasks),w,l)}); }
+  else { const all=Object.values(REWARDS).flatMap(r=>r.both), pool=D.sit==='ld'?all:all.filter(t=>!/teleport|play it at the same time/.test(t));
+    cards.push({who:'both', kind:'both', text:pool[Math.floor(rng(cyrb53(D.code+'|'+runOf()+'|both'+L))()*pool.length)]}); }
+  return MODE==='two' ? cards.filter(c=>c.who===ME||c.who==='both') : cards; }
+function rewardHTML(c, i){ const mine=MODE==='two'&&c.who===ME;
+  const head = c.kind==='both' ? '💞 For both of you' : c.kind==='task' ? `💌 ${mine?'Your':esc(nm(c.who))+"'s"} task` : c.kind==='mystery' ? `🎁 ${mine?'Your':esc(nm(c.who))+"'s"} mystery box` : `🏆 ${mine?'Your':esc(nm(c.who))+"'s"} prize`;
+  if(c.kind==='mystery') return `<div class="rw"><span class="who2">${head}</span><button class="box" data-box="${i}"><b>🎁</b>Tap to open</button><div class="prize" id="bx${i}" hidden>${esc(c.text)}</div></div>`;
+  return `<div class="rw"><span class="who2">${head}</span><div class="scr"><div class="under">${esc(c.text)}</div><canvas class="scrc"></canvas></div></div>`; }
+function vReveal(firstRole){ chrome(true); const L=S.lvl, gid=gameOf(L), N=NLV();
   const ra = MODE==='one'?firstRole:ME, rb=other(ra), pa=S.mine, pb=S.skip!=null&&S.theirs==null?null:S.theirs;
   const v=verdict(gid,pa,pb,ra,rb);
-  if(S.counted<L){ S.counted=L; if(v.w&&v.w!=='tie') S.wins[v.w]++; if(v.same) S.agree+=v.same; save(); }
-  const msg=freshMsg();
-  show(`<section class="card"><span class="eyebrow">Level ${L} complete</span><h1>🎉 Level ${L} done!</h1>
+  if(S.counted<L){ const before={...S.wins}; S.counted=L;
+    if(v.w==='both'){ S.wins.her++; S.wins.him++; } else if(v.w&&v.w!=='tie') S.wins[v.w]+=ptsOf(L);
+    S.hist=(S.hist||[]).concat(v.w==='her'||v.w==='him'?v.w:null); if(v.same) S.agree+=v.same;
+    S.talk=talkLines(before,v,L); S.rw={L, cards:makeRewards(v,L)}; save(); }
+  if(!S.rw||S.rw.L!==L){ S.rw={L, cards:makeRewards(v,L)}; save(); }
+  const last=L>=N, wheel=L===Math.ceil(N/2)&&!last;
+  show(`<section class="card"><span class="eyebrow">Level ${L} of ${N} complete</span><h1>${last?'🏁 Final level done!':'🎉 Level '+L+' done!'}</h1>
     ${gid!=='likely'&&pb!=null?`<div class="cmp"><div class="${v.w===ra?'win':''}"><b>${fmt(gid,pa)}</b><span>${esc(nm(ra))}</span></div>
       <div class="${v.w===rb?'win':''}"><b>${fmt(gid,pb)}</b><span>${esc(nm(rb))}</span></div></div>`:''}
-    <p class="verdict">${esc(v.text)}</p>${scoreHTML()}</section>
-    <section class="card"><span class="eyebrow">Your reward</span><h3>Scratch to reveal a love note</h3>
-      <div class="scr"><div class="under">${esc(msg)}</div><canvas id="scr"></canvas></div></section>
-    ${L%5===0?`<section class="card"><span class="eyebrow">Bonus</span><h3>${D.sit==='ld'?"Spin for tonight's call":'Spin for a date idea'}</h3>
+    <p class="verdict">${esc(v.text)}</p>${scoreHTML()}
+    ${(S.talk||[]).length?`<div class="talk">${S.talk.map(t=>`<p>${esc(t)}</p>`).join('')}</div>`:''}</section>
+    <section class="card"><span class="eyebrow">${last?'Final reward':L/N<.34?'Warm-up reward':L/N<.67?'Heating up':'Final stretch'}</span>
+      <h3>${S.rw.cards.some(c=>c.kind==='mystery')?'A mystery box appeared!':'Scratch to reveal'}</h3>
+      ${S.rw.cards.map(rewardHTML).join('')}</section>
+    ${wheel?`<section class="card"><span class="eyebrow">Halfway bonus</span><h3>${D.sit==='ld'?"Spin for tonight's call":'Spin for a date idea'}</h3>
       <div class="wheelbox"><canvas id="wheel" width="600" height="600"></canvas><div class="pointer"></div></div>
       <div class="result" id="wRes"></div><p class="muted" id="wDesc" style="text-align:center"></p><div class="row center"><button class="btn" id="spin">Spin</button></div></section>`:''}
-    <button class="btn big" id="next">Next level →</button>`);
-  win(); mountScratch(); if(L%5===0) mountWheel();
-  $('#next').onclick=()=>{ const skip=S.skip; S.skip=null; enterLevel(L+1, skip); vHome(); }; }
+    <button class="btn big" id="next">${last?'See the grand finale 🏆':'Next level →'}</button>`);
+  win(); mountScratch(); if(wheel) mountWheel();
+  $$('[data-box]').forEach(b=>b.onclick=()=>{ if(b.classList.contains('open')) return; b.classList.add('open'); sfx(400,.1);
+    setTimeout(()=>{ b.hidden=true; $('#bx'+b.dataset.box).hidden=false; win(); },500); });
+  $('#next').onclick=()=>{ const skip=S.skip; S.skip=null; enterLevel(L+1, last?null:skip);
+    if(last) return vFinale(); const t=TWISTS[twistOf(L+1)]; if(t){ toast(t.e+' '+t.name+'!'); [660,880,1100].forEach((f,i)=>setTimeout(()=>sfx(f,.12,'square',.05),i*120)); } vHome(); }; }
+
+function vFinale(){ chrome(true); const N=NLV(), a=S.wins.her, b=S.wins.him, M=REWARDS[MOOD]?MOOD:'rom', team=D.style==='team';
+  const champ = team?null : a>b?'her':b>a?'him':null, lose=champ?other(champ):null;
+  let best=0, cur=0, prev=null; (S.hist||[]).forEach(w=>{ if(w&&w===prev) cur++; else cur=w?1:0; prev=w; best=Math.max(best,cur); });
+  const r=rng(cyrb53(D.code+'|'+runOf()+'|grand'))();
+  const prize = champ ? GRAND[Math.floor(r*GRAND.length)].replace(/\{w\}/g,nm(champ)).replace(/\{l\}/g,nm(lose)) : GRAND_BOTH[Math.floor(r*GRAND_BOTH.length)];
+  show(`<section class="card" style="text-align:center"><span class="eyebrow">The grand finale</span>
+    <div class="trophy">${champ?'👑':team?'🏆':'💞'}</div>
+    <div class="champ">${champ?esc(nm(champ))+' wins!':team?'Team champions!':"It's a tie!"}</div>
+    <p class="verdict">${champ?`Champion of ${esc(gameTitle())}`:team?`${esc(nm('her'))} & ${esc(nm('him'))} cleared all ${N} levels together`:'A perfect match, right to the very end'}</p>
+    <div class="stats">${team?`<div><b>${N}</b><span>levels</span></div><div><b>${S.agree}</b><span>same answers</span></div><div><b>💯</b><span>teamwork</span></div>`
+      :`<div><b>${a}–${b}</b><span>final score</span></div><div><b>${best}</b><span>best streak</span></div><div><b>${S.agree}</b><span>same answers</span></div>`}</div>
+    ${champ?`<div class="badge"><b>👑</b><span>${esc(nm(champ))}: Champion of Love</span></div><div class="badge"><b>💖</b><span>${esc(nm(lose))}: Most Adorable Challenger</span></div>`
+      :`<div class="badge"><b>💞</b><span>${esc(nm('her'))} & ${esc(nm('him'))}: Perfect Match</span></div>`}
+    <span class="eyebrow">Grand prize</span><div class="prize">${esc(prize)}</div>
+    <p class="muted">${esc(CLOSING[M])}</p></section>
+    <section class="card"><h3>Play again?</h3><p class="muted small">A new game mixes the levels and twists in a new order.${MODE==='two'?' Both of you tap it, so your keys still match.':''}</p>
+      <button class="btn big" id="again">🔄 Play a new game</button><button class="btn alt" id="redesign">✏️ Redesign the game</button></section>`);
+  win(); setTimeout(win,900); setTimeout(win,1800);
+  $('#again').onclick=startOver; $('#redesign').onclick=redesign; }
 
 function notePool(){ const base = D.sit==='ld' ? SCRATCH : HOME_NOTES; return D.style==='silly' ? FUNNY_NOTES.concat(base.slice(0,12)) : base; }
 function freshMsg(){ const pool=notePool(), key='seen_'+D.code+'_'+(MODE==='one'?'one':ME); let seen=store.get(key,[]);
@@ -667,7 +835,7 @@ function roundQs(r){ const LIKELY=quizList(), R=LIKELY.length/8, cyc=Math.floor(
   if(cyc>0){ let a=(cyc*2654435761)>>>0; const rnd=()=>{ a=(a+0x6D2B79F5)|0; let t=Math.imul(a^(a>>>15),1|a); t=(t+Math.imul(t^(t>>>7),61|t))^t; return ((t^(t>>>14))>>>0)/4294967296; };
     for(let k=order.length-1;k>0;k--){ const j=Math.floor(rnd()*(k+1)); [order[k],order[j]]=[order[j],order[k]]; } }
   return order.slice(i*8,i*8+8).map(k=>LIKELY[k]); }
-function gLikely(el, tier, done){ const N=D.len===0?5:8, qs=roundQs(Math.floor((S.lvl-1)/GLIST().length)).slice(0,N); let i=0, bits=0;
+function gLikely(el, tier, done){ const N=D.len===0?5:8, qs=roundQs(seqFor().slice(0,S.lvl-1).filter(g=>g==='likely').length+runOf()*2).slice(0,N); let i=0, bits=0;
   el.innerHTML=`<span class="status" id="qn"></span><div class="bar"><i id="qb"></i></div><div class="q" id="qq"></div>
     <div class="pick"><button class="btn" data-w="0">${esc(nm('her'))}</button><button class="btn b2" data-w="1">${esc(nm('him'))}</button></div>`;
   const showQ=()=>{ el.querySelector('#qn').textContent=`Question ${i+1} of ${N}`; el.querySelector('#qb').style.width=(i/N*100)+'%';
@@ -696,7 +864,7 @@ function gCatch(el, tier, done){ const TIME=[15,20,25][D.len], target=Math.round
   el.querySelector('#cgo').onclick=start;
   const stop=new MutationObserver(()=>{ if(!document.body.contains(f)){ clearInterval(timer); clearInterval(spawnT); stop.disconnect(); } }); stop.observe(V,{childList:true}); }
 
-function gTTT(el, tier, done){ const smart=Math.min(.95,.7+.1*tier), L=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]]; let b, over;
+function gTTT(el, tier, done){ const smart=Math.min(1,.62+.1*tier), L=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]]; let b, over;
   el.innerHTML=`<div class="ttt"></div><div class="row between"><span class="status" id="ts"></span><button class="btn alt" id="tagain" hidden>Try again</button></div>`;
   const g=el.querySelector('.ttt'), st=el.querySelector('#ts'), wins=(bb,p)=>L.find(l=>l.every(k=>bb[k]===p));
   function reset(){ b=Array(9).fill(null); over=false; el.querySelector('#tagain').hidden=true; g.innerHTML='';
@@ -712,8 +880,64 @@ function gTTT(el, tier, done){ const smart=Math.min(.95,.7+.1*tier), L=[[0,1,2],
       const c=wins(b,'cpu'); if(c) return end(0,c); if(b.every(Boolean)) return end(1); st.textContent='Your turn ❤️'; },450); }
   el.querySelector('#tagain').onclick=reset; reset(); }
 
+function onLeave(el, fn){ const o=new MutationObserver(()=>{ if(!document.body.contains(el)){ fn(); o.disconnect(); } }); o.observe(V,{childList:true}); }
+
+function gSimon(el, tier, done){ const sym=THEMES[THEME].sym.slice(0,4), speed=Math.max(300,640-tier*65), tones=[392,494,587,698];
+  let seq=[], i=0, best=0, alive=true, T=[];
+  el.innerHTML=`<div class="hud"><span>Steps <b id="ss">0</b></span><span id="sm">Ready?</span></div>
+    <div class="simon wait">${sym.map((x,k)=>`<button data-k="${k}" aria-label="${x}">${x}</button>`).join('')}</div>
+    <div class="row center" id="sbox"><button class="btn" id="sgo">Start</button></div>`;
+  const pads=[...el.querySelectorAll('.simon button')], box=el.querySelector('.simon'), msg=el.querySelector('#sm');
+  const flash=k=>{ pads[k].classList.add('lit'); sfx(tones[k],.16); T.push(setTimeout(()=>pads[k].classList.remove('lit'),speed*.55)); };
+  function round(){ seq.push(Math.floor(Math.random()*4)); i=0; box.classList.add('wait'); msg.textContent='Watch…';
+    seq.forEach((k,j)=>T.push(setTimeout(()=>flash(k),500+j*speed)));
+    T.push(setTimeout(()=>{ box.classList.remove('wait'); msg.textContent='Your turn!'; },500+seq.length*speed)); }
+  function finish(){ alive=false; box.classList.add('wait'); msg.textContent='';
+    el.querySelector('#sbox').innerHTML=`<p class="earned">${best?`You remembered ${best} steps!`:'Oops! No steps this time.'}</p>`;
+    if(best) win(); T.push(setTimeout(()=>done(best),1500)); }
+  pads.forEach(b=>b.onclick=()=>{ if(!alive) return; const k=+b.dataset.k; flash(k);
+    if(k!==seq[i]){ sfx(170,.35,'sawtooth',.05); return finish(); }
+    if(++i===seq.length){ best=seq.length; el.querySelector('#ss').textContent=best; if(best>=12+tier) return finish();
+      msg.textContent='Nice!'; box.classList.add('wait'); T.push(setTimeout(round,650)); } });
+  el.querySelector('#sgo').onclick=e=>{ e.target.remove(); for(let k=0;k<Math.min(tier,3);k++) seq.push(Math.floor(Math.random()*4)); round(); };
+  onLeave(box,()=>T.forEach(clearTimeout)); }
+
+const ODD_SETS=[["😀","😃"],["❤️","🧡"],["🌙","🌛"],["⭐","🌟"],["🍎","🍅"],["😊","😌"],["🐶","🐕"],["💙","💜"],["😺","😸"],["🍊","🍑"],["💗","💖"],["🌸","🌺"],["😍","🥰"],["🍓","🍒"],["🐱","🐈"],["😴","😪"]];
+function gOdd(el, tier, done){ const TIME=[20,25,30][D.len]; let found=0, left=TIME, timer=0, sz=3+Math.min(tier,2);
+  el.innerHTML=`<div class="hud"><span>Found <b id="of">0</b></span><span>Time <b id="ot">${TIME}</b>s</span></div><div class="bar"><i id="ob"></i></div>
+    <div class="field" style="height:auto;min-height:330px;padding:10px"><div class="odd" id="og"></div>
+    <div class="overlay" id="oov"><div class="stack" style="align-items:center"><p style="font-size:44px">🔍</p><p>Find the different one. You have ${TIME} seconds.</p><button class="btn" id="ogo">Start</button></div></div></div>`;
+  const g=el.querySelector('#og'), ov=el.querySelector('#oov');
+  function board(){ const n=Math.min(7,sz+Math.floor(found/2)), N=n*n, set=ODD_SETS[Math.floor(Math.random()*ODD_SETS.length)], flip=Math.random()<.5,
+      a=flip?set[1]:set[0], b=flip?set[0]:set[1], odd=Math.floor(Math.random()*N);
+    g.style.gridTemplateColumns=`repeat(${n},minmax(0,1fr))`; g.style.fontSize=Math.floor((g.clientWidth||300)/n*.58)+'px';
+    g.innerHTML=Array.from({length:N},(_,k)=>`<button data-o="${k===odd?1:0}" aria-label="${k===odd?b:a}">${k===odd?b:a}</button>`).join('');
+    g.querySelectorAll('button').forEach(x=>x.onclick=()=>{ if(left<=0) return;
+      if(x.dataset.o==='1'){ found++; el.querySelector('#of').textContent=found; sfx(880,.08); board(); }
+      else { x.classList.remove('bad'); void x.offsetWidth; x.classList.add('bad'); left=Math.max(0,left-2); el.querySelector('#ot').textContent=left; sfx(180,.2,'sawtooth',.04); } }); }
+  function start(){ ov.hidden=true; board();
+    timer=setInterval(()=>{ left--; el.querySelector('#ot').textContent=Math.max(0,left); el.querySelector('#ob').style.width=(100-left/TIME*100)+'%';
+      if(left<=0){ clearInterval(timer); ov.innerHTML=`<p class="earned">Time! You found ${found} 🎉</p>`; ov.hidden=false; if(found) win(); setTimeout(()=>done(found),1500); } },1000); }
+  el.querySelector('#ogo').onclick=start; onLeave(g,()=>clearInterval(timer)); }
+
+function gTiming(el, tier, done){ const TRIES=5, zw=Math.max(9,26-tier*3.5), period=Math.max(650,1500-tier*170); let tri=0, score=0, raf=0, t0=0, zx=50, running=false, x=0, marks=[];
+  el.innerHTML=`<div class="hud"><span>Score <b id="tsc">0</b></span><span>Try <b id="ttr">1</b> of ${TRIES}</span></div>
+    <div class="tbar" id="tb"><div class="tzone" id="tz"></div><div class="tmid" id="tm"></div><div class="tdot" id="td">${THEMES[THEME].c[0]}</div></div>
+    <div class="tries" id="tt"></div><p class="status" id="tmsg" style="text-align:center">Tap Stop when the heart is in the green zone.</p>
+    <button class="btn big" id="tgo">Start</button>`;
+  const tz=el.querySelector('#tz'), tm=el.querySelector('#tm'), td=el.querySelector('#td'), go=el.querySelector('#tgo'), msg=el.querySelector('#tmsg');
+  function place(){ zx=zw/2+4+Math.random()*(92-zw); tz.style.left=(zx-zw/2)+'%'; tz.style.width=zw+'%'; tm.style.left=zx+'%'; }
+  function loop(now){ const ph=((now-t0)/period)%2; x=4+92*(ph<1?ph:2-ph); td.style.left=x+'%'; raf=requestAnimationFrame(loop); }
+  function stop(){ running=false; cancelAnimationFrame(raf); const d=Math.abs(x-zx), pts=d<=zw/6?3:d<=zw/2?1:0; score+=pts; tri++;
+    marks.push(pts===3?'🎯':pts?'✅':'❌'); el.querySelector('#tt').textContent=marks.join(' '); el.querySelector('#tsc').textContent=score;
+    msg.textContent=pts===3?'Perfect! +3':pts?'Good! +1':'Missed!'; sfx(pts===3?1047:pts?784:180,.12,pts?'triangle':'sawtooth',.05);
+    if(tri>=TRIES){ go.hidden=true; msg.innerHTML=`<span class="earned">${score} points!</span>`; if(score) win(); setTimeout(()=>done(score),1400); return; }
+    el.querySelector('#ttr').textContent=tri+1; go.textContent='Next try'; }
+  go.onclick=()=>{ if(running) return stop(); running=true; place(); go.textContent='Stop!'; msg.textContent='…'; t0=performance.now()-Math.random()*period; raf=requestAnimationFrame(loop); };
+  place(); onLeave(td,()=>cancelAnimationFrame(raf)); }
+
 // ---------- rewards ----------
-function mountScratch(){ const c=$('#scr'); if(!c) return; requestAnimationFrame(()=>{ const r=c.getBoundingClientRect(), dpr=devicePixelRatio||1;
+function mountScratch(){ $$('canvas.scrc').forEach(c=>requestAnimationFrame(()=>{ const r=c.getBoundingClientRect(), dpr=devicePixelRatio||1;
   c.width=r.width*dpr; c.height=r.height*dpr; const g=c.getContext('2d'); g.scale(dpr,dpr);
   const gr=g.createLinearGradient(0,0,r.width,r.height); gr.addColorStop(0,cssv('--a1')); gr.addColorStop(1,cssv('--a2')); g.fillStyle=gr; g.fillRect(0,0,r.width,r.height);
   g.fillStyle=cssv('--btn'); g.font='600 20px Fredoka, sans-serif'; g.textAlign='center'; g.fillText('Scratch here ✦',r.width/2,r.height/2+7); g.globalCompositeOperation='destination-out';
@@ -722,7 +946,7 @@ function mountScratch(){ const c=$('#scr'); if(!c) return; requestAnimationFrame
     if(++n%12===0&&!gone){ const d=g.getImageData(0,0,c.width,c.height).data; let clr=0; for(let i=3;i<d.length;i+=64) if(d[i]===0) clr++;
       if(clr/(d.length/64)>.5){ gone=true; c.style.opacity=0; setTimeout(()=>c.hidden=true,500); sfx(880,.15); } } };
   c.onpointerdown=e=>{ down=true; last=null; c.setPointerCapture(e.pointerId); draw(pt(e)); };
-  c.onpointermove=e=>{ if(down) draw(pt(e)); }; c.onpointerup=c.onpointercancel=()=>{ down=false; }; }); }
+  c.onpointermove=e=>{ if(down) draw(pt(e)); }; c.onpointerup=c.onpointercancel=()=>{ down=false; }; })); }
 
 function mountWheel(){ const [DATES,DATE_DESC]=wheelItems(); let ang=0, spinning=false; const c=$('#wheel'), g=c.getContext('2d'), R=290;
   function draw(){ const cols=['--a1','--a2','--a3','--tile'].map(cssv), ink=cssv('--ink'), btn=cssv('--btn'); g.clearRect(0,0,600,600); g.save(); g.translate(300,300); g.rotate(ang);
