@@ -1,6 +1,6 @@
 # Couple Game
 
-**New: Digital Love Gift (Valentine's Week edition)** is in [`valentine/`](valentine/). One surprise unlocks each day from 7 to 14 February in the receiver's time zone. Set `mode: "all"` to open everything at once for a birthday or anniversary. Edit only the `CONFIG` block. Add `#preview` to the link to see every day before February.
+**Digital Love Gift** is in [`gift/`](gift/): 8 surprises, a letter and "Open when" notes, for a birthday, Christmas, New Year, anniversary or Valentine's Day. Edit only the `CONFIG` block. Set `opens` to `"now"` (default), `"onday"` (unlocks on the date) or `"daily"` (one surprise a day, ending on the date). Demo any occasion by adding `#birthday`, `#christmas`, `#newyear`, `#anniversary` or `#valentine` to the link.
 
 A personalised two-player game gift for couples. Single page, no server, runs on GitHub Pages.
 

@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A Gift For You</title>
+<meta name="description" content="A little digital gift, made with love.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600;700&family=Fredoka:wght@500;600&family=Nunito:wght@400;600;700;800&display=swap">
+<style>
+/* VOICE tender, playful · IDEA a week of little envelopes, one opened each day · PICTURE the calendar of 8 day-cards
+   COLOUR each day brings its own two-tone ground; cards stay warm white · TYPE Dancing Script names, Fredoka titles, Nunito body
+   LAYOUT one column, one main action per screen */
+:root{--c1:#5b0f2e;--c2:#d6336c;--acc:#e0245e;--ink:#3a0d1f;--muted:#8a5468;--card:#fffafb;--tile:#fdeef3;--line:#f5d3df;
+  --script:"Dancing Script",cursive;--disp:"Fredoka","Nunito",system-ui,sans-serif;--body:"Nunito",system-ui,-apple-system,sans-serif;color-scheme:light}
+*{box-sizing:border-box;min-width:0}
+[hidden]{display:none!important}
+html,body{min-height:100%}
+body{margin:0;font:16px/1.55 var(--body);color:var(--ink);background:linear-gradient(160deg,var(--c1),var(--c2)) fixed;
+  padding:0 max(16px,env(safe-area-inset-left)) 0 max(16px,env(safe-area-inset-right));overflow-x:clip;-webkit-tap-highlight-color:transparent;transition:background .6s}
+#fx,#bg{position:fixed;inset:0;width:100%;height:100%;pointer-events:none}#bg{z-index:0}#fx{z-index:50}
+.wrap{position:relative;z-index:1;max-width:460px;margin:0 auto;padding:14px 0 30px;display:flex;flex-direction:column;gap:14px}
+.top{display:flex;justify-content:space-between;align-items:center}
+.chip{background:rgba(255,255,255,.18);color:#fff;border:1px solid rgba(255,255,255,.35);border-radius:999px;padding:8px 14px;font:700 14px var(--body);cursor:pointer;min-height:40px;backdrop-filter:blur(6px)}
+.card{background:var(--card);border-radius:26px;padding:22px 18px;display:flex;flex-direction:column;gap:14px;box-shadow:0 18px 40px rgba(40,0,20,.28);animation:rise .45s ease}
+@keyframes rise{from{transform:translateY(10px);opacity:.3}to{transform:none;opacity:1}}
+h1,h2,h3{margin:0;font-family:var(--disp);line-height:1.12;text-wrap:balance}
+h2{font-size:26px}h3{font-size:19px}p{margin:0}
+.script{font-family:var(--script);font-weight:700}
+.hero{text-align:center;color:#fff;padding:22px 6px 6px}
+.hero .eyebrow{font-weight:800;font-size:13px;letter-spacing:.04em;opacity:.9}
+.hero h1{font-family:var(--script);font-size:clamp(48px,15vw,64px);font-weight:700;line-height:1;margin:6px 0}
+.hero p{opacity:.92;font-weight:600}
+.muted{color:var(--muted)}.small{font-size:14px}.center{text-align:center}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:54px;padding:12px 20px;border:none;border-radius:18px;cursor:pointer;
+  font:600 19px var(--disp);background:var(--acc);color:#fff;text-decoration:none;box-shadow:0 4px 0 color-mix(in srgb,var(--acc) 60%,#000);width:100%}
+.btn:active{transform:translateY(3px);box-shadow:0 1px 0 color-mix(in srgb,var(--acc) 60%,#000)}
+.btn.soft{background:var(--tile);color:var(--ink);box-shadow:0 4px 0 var(--line)}
+.btn.wa{background:#25D366;color:#053d20;box-shadow:0 4px 0 #128C7E}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+button:focus-visible,a:focus-visible{outline:3px solid #ffd166;outline-offset:2px}
+/* lock */
+.dots{display:flex;justify-content:center;gap:12px}.dots i{width:16px;height:16px;border-radius:50%;border:2px solid var(--acc)}.dots i.f{background:var(--acc)}
+.dots.bad{animation:shake .4s}@keyframes shake{25%{transform:translateX(-8px)}50%{transform:translateX(8px)}75%{transform:translateX(-4px)}}
+.pad{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;max-width:280px;width:100%;margin:0 auto}
+.pad button{font:700 24px var(--disp);border:2px solid var(--line);background:var(--tile);color:var(--ink);border-radius:18px;min-height:58px;cursor:pointer}
+/* calendar */
+.count{text-align:center}.count b{display:block;font:600 clamp(40px,13vw,56px) var(--disp);color:var(--acc);font-variant-numeric:tabular-nums;line-height:1.1}
+.cal{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.day{position:relative;display:flex;flex-direction:column;align-items:center;gap:2px;padding:16px 8px 14px;border-radius:20px;border:2px solid var(--line);background:var(--tile);color:var(--ink);cursor:pointer;font:600 17px var(--disp)}
+.day b{font-size:40px;line-height:1.15}.day small{font:700 12px var(--body);color:var(--muted)}
+.day.lock{opacity:.6;filter:grayscale(.6)}.day.lock b{font-size:34px}
+.day.new{border-color:var(--acc);background:color-mix(in srgb,var(--acc) 12%,#fff);animation:glow 1.8s ease-in-out infinite}
+@keyframes glow{50%{box-shadow:0 0 0 6px color-mix(in srgb,var(--acc) 22%,transparent)}}
+.day .tag{position:absolute;top:8px;right:8px;font:800 11px var(--body);background:var(--acc);color:#fff;border-radius:999px;padding:2px 8px}
+.day.done .tag{background:#2a9d6f}
+ .extras{display:grid;gap:10px}
+.trip{display:flex;flex-direction:column;gap:10px}
+.step{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:18px;border:2px solid var(--line);background:var(--tile);color:var(--ink);cursor:pointer;text-align:left;font:600 17px var(--disp)}
+.step b{font-size:32px;line-height:1;width:44px;text-align:center;flex:none}.step small{display:block;font:700 12px var(--body);color:var(--muted)}
+.step.next{border-color:var(--acc);background:color-mix(in srgb,var(--acc) 12%,#fff);animation:glow 1.8s ease-in-out infinite}
+.step.lock{opacity:.55}.step.done small{color:#2a9d6f}
+.taps{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;width:100%;max-width:300px}
+.taps button{aspect-ratio:1;border:2px solid var(--line);border-radius:20px;background:var(--tile);font-size:40px;cursor:pointer;transition:transform .15s}
+.taps button.on{transform:scale(1.08);border-color:var(--acc);background:color-mix(in srgb,var(--acc) 14%,#fff)}
+.big{font-size:96px;line-height:1}
+/* day screens */
+.dhead{display:flex;align-items:center;gap:12px}.dhead b{font-size:44px;line-height:1}
+.eyebrow2{font:800 12px var(--body);letter-spacing:.06em;text-transform:uppercase;color:var(--acc)}
+.stage{min-height:300px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center;position:relative}
+.bud{font-size:110px;line-height:1;border:none;background:none;cursor:pointer;transition:transform .2s;padding:10px}
+.bud:active{transform:scale(.92)}
+.meter{width:100%;height:12px;border-radius:6px;background:var(--line);overflow:hidden}.meter i{display:block;height:100%;width:0;background:var(--acc);transition:width .2s}
+.ask{font:600 26px var(--disp)}
+.dodge{position:relative;width:100%;height:150px}
+.dodge .btn{position:absolute;width:auto;transition:left .25s,top .25s,transform .25s}
+.choco{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;width:100%}
+.choco button{aspect-ratio:1;border:none;border-radius:50%;cursor:pointer;font-size:38px;background:radial-gradient(circle at 35% 30%,#8b5a3c,#4a2512);box-shadow:inset 0 -6px 0 rgba(0,0,0,.25),0 4px 10px rgba(0,0,0,.2);color:#fff}
+.choco button.open{background:var(--tile);box-shadow:none;font:600 13px/1.3 var(--body);color:var(--ink);padding:8px;border-radius:18px;aspect-ratio:auto;min-height:110px;animation:rise .4s}
+.pz{display:grid;gap:3px;width:100%;max-width:330px;aspect-ratio:1;background:var(--line);padding:3px;border-radius:16px}
+.tile{border:none;border-radius:8px;padding:0;cursor:pointer;background-color:var(--tile);position:relative}
+.tile.blank{background:transparent;cursor:default}.pz.solved{gap:0;padding:0}.pz.solved .tile{border-radius:0}
+.tile span{position:absolute;top:3px;left:6px;font:800 11px var(--body);color:#fff;text-shadow:0 1px 2px #000a}
+.prom{width:100%;display:flex;flex-direction:column;gap:10px}
+.prom button{display:flex;gap:10px;align-items:center;text-align:left;border:2px dashed var(--line);background:var(--tile);border-radius:16px;padding:14px;font:700 16px var(--body);color:var(--ink);cursor:pointer;position:relative;overflow:hidden;touch-action:none;user-select:none}
+.prom button i{position:absolute;inset:0;width:0;background:color-mix(in srgb,var(--acc) 22%,transparent);transition:width .1s linear}
+.prom button span{position:relative}.prom button.ok{border-style:solid;border-color:var(--acc)}
+.hugbtn{width:190px;height:190px;border-radius:50%;border:none;cursor:pointer;font-size:84px;position:relative;touch-action:none;user-select:none;-webkit-user-select:none;
+  background:conic-gradient(var(--acc) calc(var(--p,0)*1%),var(--tile) 0);box-shadow:0 10px 30px rgba(0,0,0,.15)}
+.hugbtn::after{content:"";position:absolute;inset:14px;border-radius:50%;background:var(--card)}
+.hugbtn span{position:relative;z-index:1;display:block;transition:transform .2s}.hugbtn.on span{transform:scale(1.15)}
+.field{position:relative;width:100%;height:340px;border-radius:20px;background:var(--tile);overflow:hidden;touch-action:manipulation;user-select:none}
+.k{position:absolute;font-size:40px;border:none;background:none;padding:4px;cursor:pointer;line-height:1}.k.pop{animation:pop .25s forwards}@keyframes pop{to{transform:scale(1.9);opacity:0}}
+.over{position:absolute;inset:0;display:grid;place-items:center;padding:16px;background:color-mix(in srgb,var(--tile) 80%,transparent)}
+.hud{display:flex;justify-content:space-between;width:100%;font:800 15px var(--body)}
+.qq{font:600 22px var(--disp);text-wrap:balance}
+.opts{display:grid;gap:10px;width:100%}
+.opts button{border:2px solid var(--line);background:var(--tile);border-radius:16px;padding:14px;font:700 17px var(--body);color:var(--ink);cursor:pointer;text-align:left}
+.opts button.right{border-color:#2a9d6f;background:#e3f6ec}.opts button.wrong{border-color:#d1495b;background:#fde6e9}
+/* reveal + letter */
+.photo{width:100%;aspect-ratio:4/5;border-radius:20px;overflow:hidden;background:var(--tile);transform:rotate(-1.5deg);box-shadow:0 10px 24px rgba(0,0,0,.18);border:8px solid #fff}
+.photo img{width:100%;height:100%;object-fit:cover;display:block}
+.note{font:700 clamp(24px,7vw,30px)/1.35 var(--script);text-align:center;color:var(--ink);text-wrap:pretty}
+.letter{font:600 17px/1.75 var(--body);white-space:pre-line}
+.sign{font:700 30px var(--script);text-align:right;color:var(--acc)}
+.album{display:grid;grid-template-columns:1fr 1fr;gap:8px}.album figure{margin:0;aspect-ratio:3/4;border-radius:14px;overflow:hidden;background:var(--tile)}
+.album figure:first-child{grid-column:span 2;aspect-ratio:4/3}.album img{width:100%;height:100%;object-fit:cover;display:block}
+.ow{display:grid;gap:10px}.ow details{background:var(--tile);border-radius:16px;padding:4px 14px;border:2px solid var(--line)}
+.ow summary{cursor:pointer;font:600 18px var(--disp);padding:12px 0;list-style:none}.ow summary::-webkit-details-marker{display:none}
+.ow details[open]{border-color:var(--acc)}.ow details p{padding:0 0 14px;font-weight:600;white-space:pre-line}
+.toast{position:fixed;left:50%;bottom:calc(18px + env(safe-area-inset-bottom));transform:translate(-50%,160%);z-index:60;background:#fff;color:var(--ink);padding:11px 18px;border-radius:999px;font-weight:800;box-shadow:0 10px 30px rgba(0,0,0,.3);transition:transform .4s cubic-bezier(.3,1.4,.5,1);max-width:92vw;text-align:center}
+.toast.show{transform:translate(-50%,0)}
+.credit{color:#fff;opacity:.85;text-align:center;font-size:13px}.credit b{user-select:all}
+.link{background:none;border:none;color:var(--muted);font:700 15px var(--body);text-decoration:underline;cursor:pointer;padding:8px}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<canvas id="bg" aria-hidden="true"></canvas><canvas id="fx" aria-hidden="true"></canvas>
+<div class="wrap">
+  <div class="top" id="top" hidden><button class="chip" id="homeBtn">🎁 All surprises</button><button class="chip" id="snd" aria-label="Music">♪</button></div>
+  <main id="view"></main>
+  <p class="credit">Made with love by Monem · want one for your someone? <b>info@monemshariar.com</b></p>
+</div>
+<div class="toast" id="toast" role="status"></div>
+<script>
+// ================= Edit these for each gift =================
+const CONFIG = {
+  occasion: "birthday",            // "birthday" | "christmas" | "newyear" | "anniversary" | "valentine"
+  to: "Mira",                      // who receives the gift
+  from: "Sam",                     // who sends it
+  lock: "1402", lockHint: "Enter the day we first met: day then month (DDMM).",
+  opens: "now",                    // "now" = everything opens right away (one surprise after another)
+                                   // "onday" = the whole gift unlocks on `date`
+                                   // "daily" = one surprise a day, the last one on `date` (an 8-day countdown)
+  date: "2026-12-25",              // only used for "onday" and "daily"
+  tz: "America/Toronto",           // receiver's time zone (for "onday" and "daily")
+  replyTo: "",                     // sender's WhatsApp number, e.g. "8801712345678" (optional)
+  music: "media/music.mp3",        // "" for no music
+  puzzle: "media/puzzle.jpg",
+  photos: ["media/w1.jpg","media/w2.jpg","media/w3.jpg","media/w4.jpg","media/w5.jpg"],
+  msgs: [  // one message (and optional photo) after each of the 8 surprises, written by the sender
+    {msg:"Every wish I make starts with you.", photo:"media/w1.jpg"},
+    {msg:"I knew you'd say yes. You always do.", photo:"media/w2.jpg"},
+    {msg:"Little secrets. All of them true.", photo:""},
+    {msg:"Every piece of us fits. Even the messy ones.", photo:"media/puzzle.jpg"},
+    {msg:"You caught them all. You always do.", photo:""},
+    {msg:"I'll help make every one of these come true.", photo:"media/w3.jpg"},
+    {msg:"Until I can hug you for real, hold on to this one.", photo:"media/w4.jpg"},
+    {msg:"You're my favourite person. Today and every day.", photo:"media/w5.jpg"}
+  ],
+  secrets: ["The way you laugh at your own jokes.","How you always know when I'm tired.","Your terrible singing in the car.","The first time you held my hand.","How you make everyone feel welcome.","That you still choose me, every day."],
+  wishes: ["You'll always have someone in your corner. Me.","More lazy Sundays, together.","Every dream you chase, I'll chase with you.","Lots of laughing until it hurts."],
+  quiz: [
+    {q:"Where did we go on our first date?", a:["A coffee shop","The cinema","A park walk","A bookshop"], ok:0},
+    {q:"What's my favourite food?", a:["Biryani","Pizza","Sushi","Pasta"], ok:0},
+    {q:"What did I say the first time I saw you?", a:["Nothing, I was too nervous","Hi!","Nice shoes","Is this seat taken?"], ok:0},
+    {q:"What's our song?", a:["The one from our first road trip","A wedding song","Happy Birthday","I don't have one"], ok:0},
+    {q:"What do I love most about you?", a:["Everything. Trick question.","Your cooking","Your phone","Your shoes"], ok:0}
+  ],
+  letter: "My love,\n\nI made this little gift because a card didn't feel like enough.\n\nThank you for every early morning, every late night, and every small thing you do without being asked. You make my life softer and louder and better.\n\nWhatever comes next, I want to face it with you.",
+  openWhen: [
+    {when:"you miss me", text:"Close your eyes and count to ten. I'm thinking about you right now. I promise."},
+    {when:"you can't sleep", text:"Put on our song, breathe slowly, and imagine me telling you a terrible joke."},
+    {when:"you had a bad day", text:"Bad days end. You're stronger than you think, and I'm proud of you. Call me."},
+    {when:"you need a laugh", text:"Remember the time we got lost and blamed the map? Still your fault."}
+  ]
+};
+// ============================================================
+// Each occasion = a look + 8 surprises. g = which activity runs.
+const P = { rose:["#5b0f2e","#d6336c","#e0245e"], plum:["#3b1d5e","#b5559e","#b5367f"], choc:["#3a1d10","#a0612f","#9a4a1f"], honey:["#6b3a12","#e0a458","#c06c1e"],
+  indigo:["#2b2a6b","#7d7ad8","#5c58c9"], peach:["#7a2e2a","#f08a6c","#d9534f"], pink:["#6a0d3a","#f05d9a","#e0247a"], red:["#4a0418","#c1121f","#c1121f"],
+  party:["#3d1a6e","#e0559b","#d63384"], sky:["#123a6b","#4fa3e0","#1d77c4"], mint:["#0f4c3a","#3fb68b","#1f8f6a"], gold:["#3b2a05","#c9952b","#b07d12"],
+  pine:["#0b3b24","#2e8b57","#c1121f"], snow:["#1c3d63","#8fb9e6","#c1121f"], night:["#0b0f2e","#3a2f7a","#f2b705"], fire:["#2a0b3d","#c2185b","#ff9f1c"] };
+const OCC = {
+ birthday:{label:"A birthday gift", sub:"Happy birthday", bg:"🎈", look:P.party, reply:"🎂 I opened my birthday gift! ", steps:[
+  {name:"Make a wish",e:"🎂",g:"taps",o:{icon:"🎂",from:"🕯️",to:"💨",n:6,end:"Wish made! 🎂"},how:"Blow out every candle. Tap each one.",look:P.party},
+  {name:"A little question",e:"💌",g:"yes",o:{ask:"Ready for your birthday surprises, {to}?",yes:"Yes! 🎉",after:"🎉",afterText:"Let's go!"},how:"Answer honestly…",look:P.plum},
+  {name:"Open your presents",e:"🎁",g:"box",o:{item:"🎁",style:"gift"},how:"Each present hides a little secret. Open them all.",look:P.sky},
+  {name:"Our picture",e:"🧩",g:"puzzle",how:"Put our picture back together.",look:P.honey},
+  {name:"Pop the balloons",e:"🎈",g:"catch",o:{e:"🎈",gold:"🎁",noun:"balloons",verb:"Pop"},how:"Pop 12 balloons in 20 seconds.",look:P.mint},
+  {name:"My wishes for you",e:"🌟",g:"hold",o:{icon:"🌟",title:"wish"},how:"Press and hold each wish to make it come true.",look:P.indigo},
+  {name:"A birthday hug",e:"🤗",g:"hug",how:"Press and hold the heart. Don't let go until it's full.",look:P.peach},
+  {name:"How well do you know me?",e:"🏆",g:"quiz",how:"The last surprise. Let's see!",look:P.rose}]},
+ christmas:{label:"A Christmas gift", sub:"Merry Christmas", bg:"❄️", look:P.pine, reply:"🎄 I opened my Christmas gift! ", steps:[
+  {name:"Decorate the tree",e:"🎄",g:"taps",o:{icon:"🎄",from:"⚪",to:["🔴","⭐","🎀","🔔","🟡","🍬"],n:6,end:"So pretty! 🎄"},how:"Tap every spot to hang an ornament.",look:P.pine},
+  {name:"A little question",e:"🦌",g:"yes",o:{ask:"Will you be my Christmas present this year, {to}?",yes:"Yes! 🎄",after:"🎅",afterText:"Best present ever."},how:"Answer honestly…",look:P.red},
+  {name:"Open your presents",e:"🎁",g:"box",o:{item:"🎁",style:"gift"},how:"Each present hides a little secret. Open them all.",look:P.snow},
+  {name:"Our picture",e:"🧩",g:"puzzle",how:"Put our picture back together.",look:P.gold},
+  {name:"Catch the snowflakes",e:"❄️",g:"catch",o:{e:"❄️",gold:"⭐",noun:"snowflakes",verb:"Catch"},how:"Catch 12 snowflakes in 20 seconds.",look:P.sky},
+  {name:"My wishes for you",e:"🌟",g:"hold",o:{icon:"🌟",title:"wish"},how:"Press and hold each wish to make it come true.",look:P.night},
+  {name:"A warm hug",e:"🤗",g:"hug",how:"Press and hold the heart. Don't let go until it's full.",look:P.peach},
+  {name:"How well do you know me?",e:"🏆",g:"quiz",how:"The last surprise. Let's see!",look:P.pine}]},
+ newyear:{label:"A New Year gift", sub:"Happy New Year", bg:"✨", look:P.night, reply:"🎆 I opened my New Year gift! ", steps:[
+  {name:"Light the fireworks",e:"🎆",g:"taps",o:{icon:"🌃",from:"🚀",to:["🎆","🎇"],n:6,end:"Happy New Year! 🎆"},how:"Tap every rocket to launch it.",look:P.night},
+  {name:"A little question",e:"🥂",g:"yes",o:{ask:"Will you spend all of next year with me, {to}?",yes:"Yes! 🥂",after:"🥂",afterText:"Cheers to us."},how:"Answer honestly…",look:P.fire},
+  {name:"Memories of this year",e:"📸",g:"box",o:{item:"📸",style:"gift"},how:"Each one hides a little secret. Open them all.",look:P.plum},
+  {name:"Our picture",e:"🧩",g:"puzzle",how:"Put our picture back together.",look:P.gold},
+  {name:"Catch the sparkles",e:"✨",g:"catch",o:{e:"✨",gold:"🎆",noun:"sparkles",verb:"Catch"},how:"Catch 12 sparkles in 20 seconds.",look:P.indigo},
+  {name:"Wishes for next year",e:"🤞",g:"hold",o:{icon:"🤞",title:"wish"},how:"Press and hold each wish to seal it.",look:P.sky},
+  {name:"A midnight hug",e:"🤗",g:"hug",how:"Press and hold the heart. Don't let go until it's full.",look:P.peach},
+  {name:"How well do you know me?",e:"🏆",g:"quiz",how:"The last surprise. Let's see!",look:P.fire}]},
+ anniversary:{label:"An anniversary gift", sub:"Happy anniversary", bg:"💞", look:P.rose, reply:"💞 I opened my anniversary gift! ", steps:[
+  {name:"Grow our garden",e:"🌹",g:"taps",o:{icon:"💐",from:"🌱",to:["🌹","🌷","🌸","🌼","🌺","💮"],n:6,end:"Look how it grew 💐"},how:"Tap every seed to make it bloom.",look:P.rose},
+  {name:"A little question",e:"💍",g:"yes",o:{ask:"Would you choose me all over again, {to}?",yes:"Yes 💖",after:"💍",afterText:"I knew it."},how:"Answer honestly…",look:P.plum},
+  {name:"Little secrets",e:"🍫",g:"box",o:{item:"🍫",style:"choc"},how:"Each chocolate hides a little secret. Open them all.",look:P.choc},
+  {name:"Our picture",e:"🧩",g:"puzzle",how:"Put our picture back together.",look:P.honey},
+  {name:"Catch the kisses",e:"💋",g:"catch",o:{e:"💋",gold:"💖",noun:"kisses",verb:"Catch"},how:"Catch 12 kisses in 20 seconds.",look:P.pink},
+  {name:"My promises",e:"🤞",g:"hold",o:{icon:"🤞",title:"promise"},how:"Press and hold each promise to seal it.",look:P.indigo},
+  {name:"A long hug",e:"🤗",g:"hug",how:"Press and hold the heart. Don't let go until it's full.",look:P.peach},
+  {name:"How well do you know me?",e:"🏆",g:"quiz",how:"The last surprise. Let's see!",look:P.red}]},
+ valentine:{label:"A Valentine's gift", sub:"Happy Valentine's Day", bg:"❤", look:P.rose, reply:"💝 I opened my Valentine's gift! ", steps:[
+  {name:"Rose Day",e:"🌹",g:"rose",how:"Tap the bud to make it bloom.",look:P.rose},
+  {name:"Propose Day",e:"💍",g:"yes",o:{ask:"Will you be my Valentine, {to}?",yes:"Yes 💖",after:"💍",afterText:"Yes! I knew it."},how:"I have a question for you…",look:P.plum},
+  {name:"Chocolate Day",e:"🍫",g:"box",o:{item:"🍫",style:"choc"},how:"Each chocolate hides a little secret. Open them all.",look:P.choc},
+  {name:"Teddy Day",e:"🧸",g:"puzzle",how:"Put our picture back together.",look:P.honey},
+  {name:"Promise Day",e:"🤞",g:"hold",o:{icon:"🤞",title:"promise"},how:"Press and hold each promise to seal it.",look:P.indigo},
+  {name:"Hug Day",e:"🤗",g:"hug",how:"Press and hold the heart. Don't let go until it's full.",look:P.peach},
+  {name:"Kiss Day",e:"💋",g:"catch",o:{e:"💋",gold:"💖",noun:"kisses",verb:"Catch"},how:"Catch 12 kisses in 20 seconds.",look:P.pink},
+  {name:"Valentine's Day",e:"💝",g:"quiz",how:"How well do you know me?",look:P.red}]}
+};
+// Demo only: add #birthday, #christmas, #newyear, #anniversary or #valentine to the link to see another occasion.
+addEventListener('hashchange',()=>location.reload());
+const HASH=location.hash.slice(1); if(OCC[HASH]){ CONFIG.occasion=HASH; CONFIG.opens="now"; }
+const O=OCC[CONFIG.occasion]||OCC.birthday, STEPS=O.steps, LAST=STEPS.length-1;
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)], V=$('#view');
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const fill=s=>String(s).replace(/\{to\}/g,CONFIG.to).replace(/\{from\}/g,CONFIG.from);
+const hash=s=>{let h=5381;for(const c of s)h=(h*33)^c.charCodeAt(0);return (h>>>0).toString(36)};
+const NS='gift_'+hash(CONFIG.to+CONFIG.from+CONFIG.lock+CONFIG.occasion+CONFIG.date)+'_';
+const store={get(k,d){try{const v=localStorage.getItem(NS+k);return v==null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem(NS+k,JSON.stringify(v))}catch(e){}}};
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+let done=store.get('done',[]);
+
+// ---------- when things open (receiver's time zone) ----------
+function today(){ try{ return new Intl.DateTimeFormat('en-CA',{timeZone:CONFIG.tz,year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date()); }catch(e){ return new Date().toISOString().slice(0,10); } }
+const addDays=(s,n)=>{ const d=new Date(s+'T12:00:00Z'); d.setUTCDate(d.getUTCDate()+n); return d.toISOString().slice(0,10); };
+const between=(a,b)=>Math.round((Date.parse(b+'T12:00:00Z')-Date.parse(a+'T12:00:00Z'))/864e5);
+const pretty=s=>new Date(s+'T12:00:00Z').toLocaleDateString('en-US',{month:'short',day:'numeric',timeZone:'UTC'});
+const openDate=i=>CONFIG.opens==='daily'?addDays(CONFIG.date,i-LAST):CONFIG.opens==='onday'?CONFIG.date:null;
+const dateOpen=i=>{ const d=openDate(i); return !d||today()>=d; };
+const isOpen=i=>dateOpen(i)&&(i===0||done.includes(i-1));
+function toMidnight(){ try{ const p=Object.fromEntries(new Intl.DateTimeFormat('en-GB',{timeZone:CONFIG.tz,hour:'2-digit',minute:'2-digit',second:'2-digit',hourCycle:'h23'}).formatToParts(new Date()).map(x=>[x.type,+x.value]));
+  return 86400-(p.hour*3600+p.minute*60+p.second); }catch(e){ return 0; } }
+function untilText(d){ const n=between(today(),d); if(n<=0) return 'now'; if(n===1){ const s=toMidnight(); return `in ${Math.floor(s/3600)}h ${Math.floor(s%3600/60)}m`; } return `in ${n} days`; }
+
+// ---------- sound, confetti, background ----------
+let AC=null, soundOn=store.get('sound',true);
+function sfx(f=660,d=.1,type='triangle',v=.07){ if(!soundOn) return; try{ AC=AC||new (window.AudioContext||window.webkitAudioContext)();
+  const o=AC.createOscillator(),g=AC.createGain(); o.type=type; o.frequency.value=f; g.gain.setValueAtTime(v,AC.currentTime); g.gain.exponentialRampToValueAtTime(.0001,AC.currentTime+d);
+  o.connect(g).connect(AC.destination); o.start(); o.stop(AC.currentTime+d); }catch(e){} }
+const bgm=CONFIG.music?new Audio(CONFIG.music):null; if(bgm){ bgm.loop=true; bgm.volume=.4; }
+const play=()=>{ if(bgm&&soundOn){ const p=bgm.play(); if(p&&p.catch) p.catch(()=>{}); } };
+document.addEventListener('pointerdown',play,{once:true});
+document.addEventListener('visibilitychange',()=>{ if(!bgm) return; document.hidden?bgm.pause():(soundOn&&bgm.currentTime>0&&play()); });
+$('#snd').onclick=()=>{ soundOn=!soundOn; store.set('sound',soundOn); $('#snd').textContent=soundOn?'♪':'×'; soundOn?play():bgm&&bgm.pause(); };
+$('#snd').textContent=soundOn?'♪':'×'; if(!bgm) $('#snd').hidden=true;
+const fx=$('#fx'), fc=fx.getContext('2d'); let parts=[], raf=0;
+function confetti(n=140){ if(reduce) return; fx.width=innerWidth; fx.height=innerHeight; const cols=['#ff4d6d','#ffd166','#ffffff','#f72585','#4cc9f0'];
+  for(let i=0;i<n;i++) parts.push({x:innerWidth/2,y:innerHeight*.35,vx:(Math.random()-.5)*14,vy:-Math.random()*13-3,r:Math.random()*6+3,c:cols[i%5],a:Math.random()*6,h:Math.random()<.3});
+  if(!raf) loop(); }
+function loop(){ fc.clearRect(0,0,fx.width,fx.height); parts=parts.filter(p=>p.y<innerHeight+30);
+  parts.forEach(p=>{ p.vy+=.32; p.x+=p.vx; p.y+=p.vy; p.a+=.1; fc.save(); fc.translate(p.x,p.y); fc.rotate(p.a); fc.fillStyle=p.c;
+    if(p.h){ fc.font=(p.r*3)+'px serif'; fc.fillText(O.bg,0,0); } else fc.fillRect(-p.r/2,-p.r/2,p.r,p.r*1.6); fc.restore(); });
+  raf=parts.length?requestAnimationFrame(loop):0; }
+const win=()=>{ [523,659,784,1047].forEach((f,i)=>setTimeout(()=>sfx(f,.16),i*110)); confetti(); };
+const bg=$('#bg'), bc=bg.getContext('2d'); let fl=[], braf=0, bgE=O.bg;
+function startBg(){ cancelAnimationFrame(braf); bg.width=innerWidth; bg.height=innerHeight;
+  fl=Array.from({length:14},()=>({x:Math.random()*innerWidth,y:Math.random()*innerHeight,s:14+Math.random()*20,v:.2+Math.random()*.45,w:Math.random()*6}));
+  if(reduce) return drawBg(); (function f(){ drawBg(); fl.forEach(p=>{ p.y-=p.v; p.w+=.01; if(p.y<-30){ p.y=innerHeight+20; p.x=Math.random()*innerWidth; } }); braf=requestAnimationFrame(f); })(); }
+function drawBg(){ bc.clearRect(0,0,bg.width,bg.height); bc.globalAlpha=.35; fl.forEach(p=>{ bc.font=p.s+'px serif'; bc.fillText(bgE,p.x+Math.sin(p.w)*12,p.y); }); bc.globalAlpha=1; }
+addEventListener('resize',startBg);
+function theme(i){ const s=STEPS[i], L=s?s.look:O.look, r=document.documentElement.style;
+  r.setProperty('--c1',L[0]); r.setProperty('--c2',L[1]); r.setProperty('--acc',L[2]); bgE=s?s.e:O.bg; startBg(); }
+let tT=0; function toast(m){ const t=$('#toast'); t.textContent=m; t.classList.add('show'); clearTimeout(tT); tT=setTimeout(()=>t.classList.remove('show'),2600); }
+function show(html, top=true){ V.innerHTML=html; $('#top').hidden=!top; scrollTo({top:0,behavior:reduce?'auto':'smooth'}); }
+$('#homeBtn').onclick=()=>vHome();
+const waLink=t=>(CONFIG.replyTo?`https://wa.me/${CONFIG.replyTo}?text=`:'https://wa.me/?text=')+encodeURIComponent(t);
+let tick=0; function every(fn){ clearInterval(tick); fn(); tick=setInterval(fn,1000); }
+const onLeave=(el,fn)=>{ const o=new MutationObserver(()=>{ if(!document.body.contains(el)){ fn(); o.disconnect(); } }); o.observe(V,{childList:true}); };
+document.title=`${O.sub}, ${CONFIG.to}!`;
+
+// ---------- screens ----------
+function vLock(){ theme(null); let typed='';
+  show(`<div class="hero"><p class="eyebrow">${esc(O.label)} is waiting for you</p><h1>${esc(CONFIG.to)}</h1><p>from ${esc(CONFIG.from)}, with love</p></div>
+  <section class="card"><p class="center muted">${esc(CONFIG.lockHint)}</p><div class="dots" id="dots"></div><div class="pad" id="pad"></div></section>`,false);
+  const dots=$('#dots'), draw=()=>dots.innerHTML=[...CONFIG.lock].map((_,i)=>`<i class="${i<typed.length?'f':''}"></i>`).join('');
+  ['1','2','3','4','5','6','7','8','9','⌫','0','✓'].forEach(k=>{ const b=document.createElement('button'); b.textContent=k; b.setAttribute('aria-label',k==='⌫'?'Delete':k==='✓'?'Unlock':k);
+    b.onclick=()=>{ if(k==='⌫') typed=typed.slice(0,-1); else if(k!=='✓'&&typed.length<CONFIG.lock.length) typed+=k; sfx(520,.05); draw();
+      if(typed.length===CONFIG.lock.length){ if(typed===CONFIG.lock){ store.set('in',true); win(); setTimeout(vHome,600); }
+        else { dots.classList.add('bad'); sfx(170,.25,'sawtooth',.05); setTimeout(()=>{ dots.classList.remove('bad'); typed=''; draw(); },450); } } };
+    $('#pad').appendChild(b); }); draw(); }
+
+function vHome(){ theme(null); const first=openDate(0), wait=first&&today()<first, all=done.includes(LAST), nxt=STEPS.findIndex((_,i)=>!done.includes(i));
+  const rows=STEPS.map((s,i)=>{ const fin=done.includes(i), open=isOpen(i), d=openDate(i);
+    const note=fin?'✓ Opened':open?'Tap to open':!dateOpen(i)?`Opens ${pretty(d)} · ${untilText(d)}`:'Open the one before first';
+    return `<button class="step ${fin?'done':open?'next':'lock'}" data-i="${i}"><b>${open||fin?s.e:'🔒'}</b><span>${esc(s.name)}<small class="sn" data-i="${i}">${note}</small></span></button>`; }).join('');
+  show(`<div class="hero"><p class="eyebrow">${esc(O.label)}</p><h1>${esc(CONFIG.to)}</h1><p>${esc(O.sub)} · with love from ${esc(CONFIG.from)}</p></div>
+    ${wait?`<section class="card count"><p class="muted">Your ${CONFIG.opens==='daily'?'first surprise':'gift'} opens on ${pretty(first)}</p><b id="cd">…</b><p class="small muted">Come back then. It's worth the wait 💌</p></section>`:''}
+    ${!wait&&nxt>-1&&isOpen(nxt)?`<button class="btn" id="go">${done.length?'Next surprise':'Open your first surprise'} ${STEPS[nxt].e}</button>`:''}
+    <section class="card"><h3>${STEPS.length} surprises${CONFIG.opens==='daily'?', one a day':''}</h3><div class="trip">${rows}</div></section>
+    <section class="card extras"><button class="btn soft" id="ph">📸 Our photos</button>
+      ${all?'<button class="btn soft" id="lt">💌 Read my letter again</button>':''}
+      ${all&&CONFIG.openWhen.length?'<button class="btn" id="ow">✉️ Open when… letters</button>':CONFIG.openWhen.length?'<p class="small muted center">✉️ Secret letters unlock after the last surprise.</p>':''}</section>`);
+  $$('.step').forEach(b=>b.onclick=()=>{ const i=+b.dataset.i; if(isOpen(i)||done.includes(i)) return vStep(i);
+    toast(!dateOpen(i)?`${STEPS[i].e} Opens ${pretty(openDate(i))}, ${untilText(openDate(i))}`:`Open ${STEPS[i-1].name} first ${STEPS[i-1].e}`); });
+  if($('#go')) $('#go').onclick=()=>vStep(nxt);
+  $('#ph').onclick=vPhotos; if($('#lt')) $('#lt').onclick=vLetter; if($('#ow')) $('#ow').onclick=vOpenWhen;
+  if(first&&CONFIG.opens!=='now') every(()=>{ if($('#cd')){ const n=between(today(),first); if(n>1) $('#cd').textContent=n+' days';
+      else { const s=toMidnight(); $('#cd').textContent=`${Math.floor(s/3600)}h ${String(Math.floor(s%3600/60)).padStart(2,'0')}m ${String(s%60).padStart(2,'0')}s`; }
+      if(today()>=first) return vHome(); }
+    $$('.sn').forEach(e=>{ const i=+e.dataset.i; if(!dateOpen(i)) e.textContent=`Opens ${pretty(openDate(i))} · ${untilText(openDate(i))}`; }); }); }
+
+function vStep(i){ clearInterval(tick); theme(i); const s=STEPS[i];
+  show(`<section class="card"><div class="dhead"><b>${s.e}</b><div><span class="eyebrow2">Surprise ${i+1} of ${STEPS.length}</span><h2>${esc(s.name)}</h2></div></div>
+    <p class="muted">${esc(s.how)}</p><div class="stage" id="st"></div></section>`);
+  ({rose:gRose,taps:gTaps,yes:gYes,box:gBox,puzzle:gPuzzle,hold:gHold,hug:gHug,catch:gCatch,quiz:gQuiz})[s.g]($('#st'), ()=>{ if(!done.includes(i)){ done.push(i); store.set('done',done); } setTimeout(()=>vReveal(i),900); }, s.o||{}); }
+
+function vReveal(i){ theme(i); const s=STEPS[i], m=CONFIG.msgs[i]||{}, last=i===LAST, nx=i+1;
+  const nextOpen=!last&&dateOpen(nx);
+  show(`<section class="card"><span class="eyebrow2 center">${s.e} ${esc(s.name)}</span>
+    ${m.photo?`<div class="photo"><img src="${esc(m.photo)}" alt="A photo of ${esc(CONFIG.to)} and ${esc(CONFIG.from)}"></div>`:`<p class="center big">${s.e}</p>`}
+    <p class="note">${esc(m.msg||'')}</p><p class="sign">— ${esc(CONFIG.from)}</p>
+    ${last?'<button class="btn" id="lt">💌 Open my letter</button>':nextOpen?`<button class="btn" id="nx">Next surprise ${STEPS[nx].e}</button>`:`<p class="small muted center">Next surprise: ${STEPS[nx].e} ${esc(STEPS[nx].name)}, opens ${untilText(openDate(nx))}.</p>`}
+    <a class="btn wa" target="_blank" rel="noopener" href="${waLink(O.reply)}">💬 Reply to ${esc(CONFIG.from)}</a>
+    <button class="btn soft" id="bk">🎁 All surprises</button></section>`);
+  win(); $('#bk').onclick=vHome; if($('#lt')) $('#lt').onclick=vLetter; if($('#nx')) $('#nx').onclick=()=>vStep(nx); }
+
+function vLetter(){ theme(LAST);
+  show(`<section class="card"><span class="eyebrow2">A letter for you</span><p class="letter">${esc(CONFIG.letter)}</p><p class="sign">Forever yours,<br>${esc(CONFIG.from)}</p>
+    ${CONFIG.openWhen.length?'<button class="btn" id="ow">✉️ Open when… letters</button>':''}<button class="btn soft" id="ph">📸 Our photos</button>
+    <a class="btn wa" target="_blank" rel="noopener" href="${waLink('💌 I read your letter. ')}">💬 Reply to ${esc(CONFIG.from)}</a></section>`);
+  confetti(200); if($('#ow')) $('#ow').onclick=vOpenWhen; $('#ph').onclick=vPhotos; }
+function vOpenWhen(){ theme(LAST);
+  show(`<section class="card"><span class="eyebrow2">Keep these for later</span><h2>Open when…</h2><p class="muted small">Only open one when you really need it.</p>
+    <div class="ow">${CONFIG.openWhen.map(o=>`<details><summary>✉️ Open when ${esc(o.when)}</summary><p>${esc(o.text)}</p></details>`).join('')}</div>
+    <button class="btn soft" id="bk">🎁 All surprises</button></section>`);
+  $$('.ow details').forEach(d=>d.ontoggle=()=>{ if(d.open) sfx(880,.12); }); $('#bk').onclick=vHome; }
+function vPhotos(){ theme(null); show(`<section class="card"><span class="eyebrow2">Our photos</span><h2>A few favourites</h2>
+  <div class="album">${CONFIG.photos.map(s=>`<figure><img src="${esc(s)}" alt="A photo of ${esc(CONFIG.to)} and ${esc(CONFIG.from)}" loading="lazy"></figure>`).join('')}</div>
+  <button class="btn soft" id="bk">🎁 All surprises</button></section>`); $('#bk').onclick=vHome; }
+
+// ---------- the activities ----------
+function gRose(el,done){ let n=0; const N=6, st=['🌱','🌱','🌿','🥀','🌷','🌷','🌹'];
+  el.innerHTML=`<button class="bud" id="bud" aria-label="Tap the flower">${st[0]}</button><div class="meter"><i id="m"></i></div><p class="muted small" id="t">Tap, tap, tap…</p>`;
+  $('#bud').onclick=()=>{ if(n>=N) return; n++; sfx(400+n*90,.1); $('#bud').textContent=st[n]; $('#m').style.width=(n/N*100)+'%'; $('#bud').style.transform=`scale(${1+n*.06})`;
+    if(n===N){ $('#t').textContent='It bloomed! 🌹'; win(); done(); } }; }
+function gTaps(el,done,o){ let n=0; const to=k=>Array.isArray(o.to)?o.to[k%o.to.length]:o.to;
+  el.innerHTML=`<p class="big" id="ic">${o.icon}</p><div class="taps">${Array.from({length:o.n},(_,k)=>`<button data-k="${k}" aria-label="Tap ${k+1}">${o.from}</button>`).join('')}</div><p class="muted small" id="t">${o.n} to go</p>`;
+  $$('.taps button').forEach(b=>b.onclick=()=>{ if(b.classList.contains('on')) return; b.classList.add('on'); b.textContent=to(+b.dataset.k); n++; sfx(500+n*80,.1);
+    $('#ic').style.transform=`scale(${1+n*.05})`; $('#t').textContent=n<o.n?`${o.n-n} to go`:o.end; if(n===o.n){ win(); done(); } }); }
+function gYes(el,done,o){ let tries=0; const lines=['No','Are you sure?','Really sure?','Think again 🥺',"You can't catch me!",'Just press Yes 😄'];
+  el.innerHTML=`<p class="ask">${esc(fill(o.ask))}</p><div class="dodge" id="dz"><button class="btn" id="yes" style="left:6%;top:40px;z-index:2">${o.yes}</button><button class="btn soft" id="no" style="left:58%;top:40px">No</button></div>`;
+  const no=$('#no'), dz=$('#dz'), yes=$('#yes');
+  const run=e=>{ e.preventDefault(); tries++; sfx(300,.05); no.textContent=lines[Math.min(tries,lines.length-1)];
+    const Y=yes.getBoundingClientRect(), Z=dz.getBoundingClientRect(); let x,y,k=0;
+    do{ x=Math.random()*(dz.clientWidth-no.offsetWidth); y=Math.random()*(dz.clientHeight-no.offsetHeight); k++; }
+    while(k<40 && x+Z.left<Y.right+8 && x+Z.left+no.offsetWidth>Y.left-8 && y+Z.top<Y.bottom+8 && y+Z.top+no.offsetHeight>Y.top-8);
+    no.style.left=x+'px'; no.style.top=y+'px'; yes.style.transform=`scale(${1+Math.min(tries,4)*.1})`; };
+  no.onpointerdown=run; no.onclick=run;
+  yes.onclick=()=>{ el.innerHTML=`<p class="big">${o.after}</p><p class="ask">${esc(o.afterText)}</p>`; win(); done(); }; }
+function gBox(el,done,o){ const list=CONFIG.secrets.slice(0,6); let open=0; const gift=o.style==='gift';
+  el.innerHTML=`<div class="choco">${list.map((_,k)=>`<button data-k="${k}" aria-label="Surprise ${k+1}" ${gift?'style="background:var(--tile);box-shadow:0 4px 0 var(--line);border-radius:22px"':''}>${o.item}</button>`).join('')}</div><p class="muted small" id="t">${list.length} to go</p>`;
+  $$('.choco button').forEach(b=>b.onclick=()=>{ if(b.classList.contains('open')) return; b.classList.add('open'); b.removeAttribute('style'); b.textContent=list[+b.dataset.k]; open++; sfx(600+open*60,.1);
+    $('#t').textContent=open<list.length?`${list.length-open} to go`:'All opened! 💝'; if(open===list.length){ win(); done(); } }); }
+function gPuzzle(el,done){ const n=3,N=9,blank=8,img=CONFIG.puzzle; let st=[...Array(N).keys()],moves=0,solved=false;
+  const adj=(a,b)=>Math.abs(a-b)===n||(Math.abs(a-b)===1&&Math.floor(a/n)===Math.floor(b/n));
+  let e=blank,prev=-1; for(let i=0;i<60;i++){ const nb=[e-n,e+n,e-1,e+1].filter(p=>p>=0&&p<N&&adj(p,e)&&p!==prev); const p=nb[Math.floor(Math.random()*nb.length)]; [st[p],st[e]]=[st[e],st[p]]; prev=e; e=p; }
+  if(st.every((v,k)=>v===k)){ [st[7],st[8]]=[st[8],st[7]]; }
+  el.innerHTML=`<div class="pz" id="pz" style="grid-template-columns:repeat(3,1fr)"></div><p class="muted small" id="t">Tap a picture next to the empty space.</p><button class="link" id="skip" hidden>Too tricky? Solve it for me</button>`;
+  const pz=$('#pz'), pos=v=>`${(v%n)*50}% ${Math.floor(v/n)*50}%`;
+  const fin=()=>{ solved=true; st=[...Array(N).keys()]; pz.classList.add('solved'); draw(); $('#skip').hidden=true; $('#t').textContent='Perfect fit 🧩'; win(); done(); };
+  function draw(){ pz.innerHTML=''; st.forEach((v,i)=>{ const b=document.createElement('button'); b.className='tile'+(v===blank&&!solved?' blank':'');
+    if(v!==blank||solved){ b.style.backgroundImage=`url("${img}")`; b.style.backgroundSize='300% 300%'; b.style.backgroundPosition=pos(v); if(!solved) b.innerHTML=`<span>${v+1}</span>`; }
+    b.setAttribute('aria-label',v===blank&&!solved?'Empty space':'Piece '+(v+1)); b.onclick=()=>mv(i); pz.appendChild(b); }); }
+  function mv(i){ if(solved) return; const e=st.indexOf(blank); if(!adj(i,e)) return; [st[i],st[e]]=[st[e],st[i]]; moves++; sfx(520,.05);
+    if(moves===25) $('#skip').hidden=false; if(st.every((v,k)=>v===k)) return fin(); draw(); }
+  $('#skip').onclick=fin; draw(); }
+function gHold(el,done,o){ const list=CONFIG.wishes; let ok=0;
+  el.innerHTML=`<div class="prom">${list.map((p,k)=>`<button data-k="${k}"><i></i><span>${o.icon} ${esc(p)}</span></button>`).join('')}</div><p class="muted small" id="t">Hold each one for a second</p>`;
+  $$('.prom button').forEach(b=>{ let t0=0,af=0; const bar=b.querySelector('i');
+    const step=now=>{ const p=Math.min(1,(now-t0)/900); bar.style.width=p*100+'%'; if(p<1) af=requestAnimationFrame(step); else seal(); };
+    const seal=()=>{ if(b.classList.contains('ok')) return; b.classList.add('ok'); b.querySelector('span').textContent='✅ '+list[+b.dataset.k]; ok++; sfx(700+ok*80,.12);
+      if(ok===list.length){ $('#t').textContent=o.title==='promise'?'Sealed with a pinky promise 🤞':'Every wish is on its way ✨'; win(); done(); } };
+    b.onpointerdown=e=>{ if(b.classList.contains('ok')) return; e.preventDefault(); t0=performance.now(); af=requestAnimationFrame(step); };
+    b.onpointerup=b.onpointerleave=b.onpointercancel=()=>{ cancelAnimationFrame(af); if(!b.classList.contains('ok')) bar.style.width='0'; };
+    b.oncontextmenu=e=>e.preventDefault(); }); }
+function gHug(el,done){ const T=5000; let t0=0,af=0,fin=false;
+  el.innerHTML=`<button class="hugbtn" id="hb" aria-label="Hold for a hug"><span>🤗</span></button><p class="qq" id="t">Hold me…</p>`;
+  const hb=$('#hb'); hb.oncontextmenu=e=>e.preventDefault();
+  const step=now=>{ const p=Math.min(1,(now-t0)/T); hb.style.setProperty('--p',p*100); $('#t').textContent=p<.4?'Hold me…':p<.8?'A little longer…':'Almost…';
+    if(p<1) af=requestAnimationFrame(step); else { fin=true; hb.classList.remove('on'); $('#t').textContent=`Hug sent to ${CONFIG.from} 🤗`; win(); done(); } };
+  hb.onpointerdown=e=>{ if(fin) return; e.preventDefault(); hb.setPointerCapture(e.pointerId); hb.classList.add('on'); t0=performance.now(); af=requestAnimationFrame(step); sfx(330,.2); };
+  hb.onpointerup=hb.onpointercancel=()=>{ if(fin) return; cancelAnimationFrame(af); hb.classList.remove('on'); hb.style.setProperty('--p',0); $('#t').textContent="Don't let go! Try again"; }; }
+function gCatch(el,done,o){ const TIME=20,GOAL=12; let score=0,left=TIME,ti=0,sp=0;
+  el.innerHTML=`<div class="hud"><span>${o.e} <b id="sc">0</b> / ${GOAL}</span><span>⏱ <b id="tl">${TIME}</b>s</span></div><div class="field" id="f"><div class="over" id="ov"><div><p style="font-size:50px">${o.e}</p><p>${o.verb} ${GOAL} ${o.noun} in ${TIME} seconds</p><br><button class="btn" id="go">Start</button></div></div></div>`;
+  const f=$('#f'), ov=$('#ov');
+  function spawn(){ const k=document.createElement('button'), gold=Math.random()<.15; k.className='k'; k.textContent=gold?o.gold:o.e; k.setAttribute('aria-label',o.noun);
+    k.style.left=Math.random()*(f.clientWidth-50)+'px'; k.style.top='-50px';
+    k.animate([{transform:'translateY(0)'},{transform:`translateY(${f.clientHeight+70}px)`}],{duration:(2200+Math.random()*1400),easing:'linear'}).onfinish=()=>k.remove();
+    k.onpointerdown=e=>{ e.preventDefault(); if(k.classList.contains('pop')) return; k.classList.add('pop'); score+=gold?3:1; $('#sc').textContent=score; sfx(gold?990:760,.06); setTimeout(()=>k.remove(),250); };
+    f.appendChild(k); }
+  function start(){ score=0; left=TIME; $('#sc').textContent=0; ov.hidden=true; sp=setInterval(spawn,420);
+    ti=setInterval(()=>{ left--; $('#tl').textContent=left; if(left>0) return; clearInterval(ti); clearInterval(sp); f.querySelectorAll('.k').forEach(k=>k.remove());
+      if(score>=GOAL){ ov.innerHTML=`<p class="qq">${score} ${o.noun}! ${o.e}</p>`; ov.hidden=false; win(); done(); }
+      else { ov.innerHTML=`<div><p class="qq">${score} ${o.noun}. So close!</p><br><button class="btn" id="go">Try again</button></div>`; ov.hidden=false; $('#go').onclick=start; } },1000); }
+  $('#go').onclick=start; onLeave(f,()=>{ clearInterval(ti); clearInterval(sp); }); }
+function gQuiz(el,done){ const Q=CONFIG.quiz; let i=0,right=0;
+  function q(){ const it=Q[i], order=it.a.map((_,k)=>k).sort(()=>Math.random()-.5);
+    el.innerHTML=`<span class="eyebrow2">Question ${i+1} of ${Q.length}</span><div class="meter"><i style="width:${i/Q.length*100}%"></i></div><p class="qq">${esc(it.q)}</p>
+      <div class="opts">${order.map(k=>`<button data-k="${k}">${esc(it.a[k])}</button>`).join('')}</div>`;
+    $$('.opts button').forEach(b=>b.onclick=()=>{ if(el.dataset.lock) return; el.dataset.lock=1; const ok=+b.dataset.k===it.ok; if(ok) right++;
+      b.classList.add(ok?'right':'wrong'); if(!ok) $(`.opts button[data-k="${it.ok}"]`).classList.add('right'); sfx(ok?880:220,.15,ok?'triangle':'sawtooth',.06);
+      setTimeout(()=>{ delete el.dataset.lock; i++; i<Q.length?q():end(); },1100); }); }
+  function end(){ const r=right/Q.length; el.innerHTML=`<p class="big">${r===1?'🏆':r>=.6?'💖':'😄'}</p><p class="qq">${right} out of ${Q.length}!</p>
+    <p class="muted">${r===1?'You know me better than I know myself.':r>=.6?"You know me so well. I'm impressed.":"We'll have lots to talk about!"}</p>`; win(); done(); }
+  q(); }
+
+// ---------- start ----------
+startBg();
+if(store.get('in',false)) vHome(); else vLock();
+</script>
+</body>
+</html>
